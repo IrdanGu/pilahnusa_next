@@ -193,6 +193,7 @@ const WasteBankPage = () => {
           display: flex;
           align-items: center;
           gap: 16px;
+          min-width: 0;
         }
         .waste-bank-page__eyebrow {
           margin: 0;
@@ -292,6 +293,21 @@ const WasteBankPage = () => {
         .waste-bank-card__directions:hover { text-decoration: underline; }
         @media (max-width: 560px) {
           .waste-bank-page { padding-inline: 16px; }
+          .waste-bank-page__header {
+            flex-direction: column;
+          }
+          .waste-bank-page__header-actions {
+            align-items: stretch;
+            flex-direction: column;
+            width: 100%;
+          }
+          .waste-bank-page__header-actions .btn {
+            width: 100%;
+            min-width: 0;
+          }
+          .waste-bank-page__header-actions > svg {
+            align-self: flex-start;
+          }
           .waste-bank-page__list-heading { display: block; }
           .waste-bank-page__list-heading span { display: block; margin-top: 4px; }
         }
