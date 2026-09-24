@@ -51,25 +51,24 @@ test.describe('PilahNusa AI E2E Basic Flow', () => {
     await expect(assistantBubble.first()).toBeVisible();
   });
 
-  test('should navigate to the nearest waste bank page without requiring geolocation access', async ({ page }) => {
-    await page.addInitScript(() => {
-      Object.defineProperty(navigator, 'geolocation', {
-        configurable: true,
-        value: {
-          getCurrentPosition: (_success, error) => error({ code: 1 }),
-        },
-      });
-    });
+  test('should show the location denied state when geolocation permission is unavailable', async ({
+    browser,
+  }) => {
+    const context = await browser.newContext({ permissions: [] });
+    const page = await context.newPage();
 
-    await page.goto('/');
+    await page.goto('/bank-sampah');
 
-    const wasteBankLink = page.locator('.sidebar__nav-item[aria-label="Bank Sampah"]');
-    await expect(wasteBankLink).toBeVisible();
-    await wasteBankLink.click();
+    await expect(
+      page
+        .getByRole('alert')
+        .getByText('Lokasi tidak dapat diakses. Izinkan akses lokasi untuk mencari bank sampah terdekat.', {
+          exact: true,
+        })
+    ).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Coba lagi' })).toBeVisible();
 
-    await expect(page).toHaveURL(/\/bank-sampah/);
-    await expect(page.getByRole('heading', { name: 'Bank Sampah Terdekat' })).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'Lokasi belum tersedia' })).toBeVisible();
+    await context.close();
   });
 
   test('should show an accessible nearby waste bank list and Google Maps directions', async ({ page }) => {
