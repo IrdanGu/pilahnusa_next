@@ -50,4 +50,25 @@ test.describe('PilahNusa AI E2E Basic Flow', () => {
     const assistantBubble = page.locator('.chatbot-message--assistant .chatbot-message__bubble');
     await expect(assistantBubble.first()).toBeVisible();
   });
+
+  test('should navigate to the nearest waste bank page without requiring geolocation access', async ({ page }) => {
+    await page.addInitScript(() => {
+      Object.defineProperty(navigator, 'geolocation', {
+        configurable: true,
+        value: {
+          getCurrentPosition: (_success, error) => error({ code: 1 }),
+        },
+      });
+    });
+
+    await page.goto('/');
+
+    const wasteBankLink = page.locator('.sidebar__nav-item[aria-label="Bank Sampah"]');
+    await expect(wasteBankLink).toBeVisible();
+    await wasteBankLink.click();
+
+    await expect(page).toHaveURL(/\/bank-sampah/);
+    await expect(page.getByRole('heading', { name: 'Bank Sampah Terdekat' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Lokasi belum tersedia' })).toBeVisible();
+  });
 });

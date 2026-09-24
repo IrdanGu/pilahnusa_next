@@ -1,11 +1,12 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { Home, Clock, BookOpen, BotMessageSquare } from 'lucide-react';
+import { Home, Clock, BookOpen, BotMessageSquare, MapPin } from 'lucide-react';
 
 const NAV_ITEMS = [
   { path: '/', label: 'Beranda', icon: Home, exact: true },
   { path: '/history', label: 'Riwayat', icon: Clock },
   { path: '/chatbot', label: 'Chatbot', icon: BotMessageSquare },
+  { path: '/bank-sampah', label: 'Bank Sampah', icon: MapPin },
   { path: '/guide', label: 'Panduan', icon: BookOpen },
 ];
 
