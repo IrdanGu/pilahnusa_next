@@ -35,6 +35,16 @@ describe('WasteBankPage', () => {
     );
   });
 
+  it('provides a header action to request the current location again', () => {
+    renderPage();
+
+    const useLocationButton = screen.getByRole('button', { name: 'Gunakan lokasi saya' });
+    expect(useLocationButton).toBeInTheDocument();
+
+    fireEvent.click(useLocationButton);
+    expect(getCurrentPosition).toHaveBeenCalledTimes(2);
+  });
+
   it('sorts the actual waste bank dataset by distance after a successful request', async () => {
     renderPage();
     const [firstBank] = WASTE_BANKS;
@@ -65,6 +75,10 @@ describe('WasteBankPage', () => {
       'target',
       '_blank'
     );
+
+    fireEvent.click(screen.getByRole('button', { name: 'Gunakan lokasi saya' }));
+    expect(getCurrentPosition).toHaveBeenCalledTimes(2);
+    expect(screen.getByText('Mencari bank sampah terdekat...')).toBeInTheDocument();
   });
 
   it('shows an Indonesian error and retries the location request', async () => {

@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { Clock3, ExternalLink, MapPin, PackageSearch } from 'lucide-react';
+import { Clock3, ExternalLink, LocateFixed, MapPin, PackageSearch } from 'lucide-react';
 import { WASTE_BANKS } from '../data/wasteBanks';
 import {
   buildGoogleMapsDirectionsUrl,
@@ -82,7 +82,17 @@ const WasteBankPage = () => {
             Temukan tempat setor sampah terdekat dari lokasi Anda.
           </p>
         </div>
-        <MapPin aria-hidden="true" size={40} />
+        <div className="waste-bank-page__header-actions">
+          <Button
+            onClick={requestLocation}
+            variant="outline"
+            size="sm"
+            icon={<LocateFixed size={16} />}
+          >
+            Gunakan lokasi saya
+          </Button>
+          <MapPin aria-hidden="true" size={40} />
+        </div>
       </header>
 
       {status === 'loading' && <Loader text="Mencari bank sampah terdekat..." />}
@@ -178,6 +188,11 @@ const WasteBankPage = () => {
           color: var(--color-text-primary);
           font-family: var(--font-heading);
           font-size: clamp(1.6rem, 4vw, 2.25rem);
+        }
+        .waste-bank-page__header-actions {
+          display: flex;
+          align-items: center;
+          gap: 16px;
         }
         .waste-bank-page__eyebrow {
           margin: 0;
