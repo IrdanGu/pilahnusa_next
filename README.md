@@ -12,6 +12,7 @@ Aplikasi ini menggunakan frontend React + Vite, backend Node.js/Express, model k
 - Panduan pembuangan dan tips daur ulang berdasarkan hasil klasifikasi.
 - Riwayat pemindaian sampah.
 - Chatbot edukasi pengelolaan sampah dalam Bahasa Indonesia.
+- Pencarian bank sampah terdekat berdasarkan lokasi pengguna, lengkap dengan petunjuk arah Google Maps.
 - Tampilan responsif yang dioptimalkan untuk perangkat mobile.
 
 ## Tech Stack
@@ -54,6 +55,7 @@ PilahNusa-AI/
 │   └── server.js               # Entry point backend
 ├── src/                        # Aplikasi frontend React
 │   ├── components/             # Komponen UI
+│   ├── data/                   # Data statis, termasuk daftar bank sampah
 │   ├── hooks/                  # Custom hooks
 │   ├── pages/                  # Halaman aplikasi
 │   ├── services/               # Integrasi API frontend
@@ -219,6 +221,15 @@ Backend akan berjalan di:
 ```text
 http://localhost:5000
 ```
+
+### Mencari Bank Sampah Terdekat
+
+1. Buka menu **Bank Sampah** dari sidebar (atau navigasi bawah pada perangkat mobile).
+2. Izinkan akses lokasi saat diminta oleh browser. Fitur ini memerlukan izin lokasi untuk menghitung jarak dari posisi Anda.
+3. Daftar bank sampah akan diurutkan dari yang terdekat. Jika izin ditolak atau lokasi gagal diperoleh, pilih **Coba lagi** setelah mengubah izin browser.
+4. Aplikasi tidak menampilkan jarak palsu: daftar hanya ditampilkan setelah lokasi berhasil diperoleh.
+5. Data bank sampah bersifat statis dan tersimpan di `src/data/wasteBanks.js`.
+6. Pilih **Petunjuk arah** untuk membuka rute ke bank sampah tersebut di Google Maps pada tab baru.
 
 ## Script yang Tersedia
 

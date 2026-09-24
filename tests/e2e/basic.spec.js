@@ -72,6 +72,31 @@ test.describe('PilahNusa AI E2E Basic Flow', () => {
     await expect(page.getByRole('heading', { name: 'Lokasi belum tersedia' })).toBeVisible();
   });
 
+  test('should show an accessible nearby waste bank list and Google Maps directions', async ({ page }) => {
+    await page.context().grantPermissions(['geolocation'], { origin: 'http://localhost:5173' });
+    await page.context().setGeolocation({ latitude: -6.2, longitude: 106.8 });
+
+    await page.goto('/');
+
+    const wasteBankLink = page.locator('.sidebar__nav-item[aria-label="Bank Sampah"]');
+    await expect(wasteBankLink).toBeVisible();
+    await wasteBankLink.click();
+
+    await expect(page).toHaveURL(/\/bank-sampah/);
+    const bankList = page.getByRole('list', { name: 'Daftar bank sampah' });
+    await expect(bankList).toBeVisible();
+    await expect(bankList.getByRole('listitem')).toHaveCount(3);
+
+    const directionsLink = bankList.getByRole('link', {
+      name: 'Lihat rute ke Bank Sampah Melati',
+    });
+    await expect(directionsLink).toHaveAttribute(
+      'href',
+      'https://www.google.com/maps/dir/?api=1&destination=-6.2%2C106.8'
+    );
+    await expect(directionsLink).toHaveAttribute('target', '_blank');
+  });
+
   test('should navigate to the waste bank page from the mobile bottom navigation', async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await page.addInitScript(() => {
