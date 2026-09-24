@@ -69,9 +69,8 @@ const WasteBankPage = () => {
   }, [requestLocation]);
 
   return (
-    <main
+    <section
       className="waste-bank-page"
-      id="main-content"
       aria-labelledby="waste-bank-page-title"
     >
       <header className="waste-bank-page__header">
@@ -312,7 +311,7 @@ const WasteBankPage = () => {
           .waste-bank-page__list-heading span { display: block; margin-top: 4px; }
         }
       `}</style>
-    </main>
+    </section>
   );
 };
 
