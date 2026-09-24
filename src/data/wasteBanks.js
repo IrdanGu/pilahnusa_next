@@ -1,0 +1,32 @@
+export const WASTE_BANKS = [
+  {
+    id: 'bank-sampah-melati',
+    name: 'Bank Sampah Melati',
+    address: 'Jl. Kebon Jeruk No. 10, Jakarta Barat',
+    latitude: -6.2,
+    longitude: 106.8,
+    operatingStatus: 'Buka',
+    operatingHours: 'Senin-Sabtu, 08.00-16.00',
+    acceptedMaterials: ['Plastik', 'Kertas', 'Logam'],
+  },
+  {
+    id: 'bank-sampah-bersih-lestari',
+    name: 'Bank Sampah Bersih Lestari',
+    address: 'Jl. Cipete Raya No. 25, Jakarta Selatan',
+    latitude: -6.2786,
+    longitude: 106.8038,
+    operatingStatus: 'Buka',
+    operatingHours: 'Senin-Jumat, 09.00-15.00',
+    acceptedMaterials: ['Plastik', 'Kaca', 'Elektronik'],
+  },
+  {
+    id: 'bank-sampah-hijau-sejahtera',
+    name: 'Bank Sampah Hijau Sejahtera',
+    address: 'Jl. Rawamangun Muka No. 7, Jakarta Timur',
+    latitude: -6.1944,
+    longitude: 106.886,
+    operatingStatus: 'Tutup',
+    operatingHours: 'Selasa-Minggu, 08.00-14.00',
+    acceptedMaterials: ['Kertas', 'Kardus', 'Logam', 'Minyak Jelantah'],
+  },
+];
