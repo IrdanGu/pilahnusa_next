@@ -71,4 +71,25 @@ test.describe('PilahNusa AI E2E Basic Flow', () => {
     await expect(page.getByRole('heading', { name: 'Bank Sampah Terdekat' })).toBeVisible();
     await expect(page.getByRole('heading', { name: 'Lokasi belum tersedia' })).toBeVisible();
   });
+
+  test('should navigate to the waste bank page from the mobile bottom navigation', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.addInitScript(() => {
+      Object.defineProperty(navigator, 'geolocation', {
+        configurable: true,
+        value: {
+          getCurrentPosition: (_success, error) => error({ code: 1 }),
+        },
+      });
+    });
+
+    await page.goto('/');
+
+    const wasteBankLink = page.locator('.bottom-nav__item[aria-label="Bank Sampah"]');
+    await expect(wasteBankLink).toBeVisible();
+    await wasteBankLink.click();
+
+    await expect(page).toHaveURL(/\/bank-sampah/);
+    await expect(page.getByRole('heading', { name: 'Bank Sampah Terdekat' })).toBeVisible();
+  });
 });
