@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { Clock3, ExternalLink, MapPin, PackageSearch } from 'lucide-react';
 import { WASTE_BANKS } from '../data/wasteBanks';
 import {
@@ -8,7 +8,6 @@ import {
 } from '../utils/geolocationUtils';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
-import Badge from '../components/ui/Badge';
 import Loader from '../components/ui/Loader';
 
 const LOCATION_ERROR =
@@ -20,19 +19,30 @@ const WasteBankPage = () => {
   const [status, setStatus] = useState('loading');
   const [banks, setBanks] = useState([]);
   const [errorMessage, setErrorMessage] = useState('');
+  const isMountedRef = useRef(false);
+  const requestGenerationRef = useRef(0);
 
   const requestLocation = useCallback(() => {
+    const requestGeneration = requestGenerationRef.current + 1;
+    requestGenerationRef.current = requestGeneration;
+    const canUpdateState = () =>
+      isMountedRef.current && requestGenerationRef.current === requestGeneration;
+
+    if (!isMountedRef.current) return;
     setStatus('loading');
     setErrorMessage('');
 
     if (!navigator.geolocation) {
-      setStatus('error');
-      setErrorMessage(LOCATION_UNAVAILABLE);
+      if (canUpdateState()) {
+        setStatus('error');
+        setErrorMessage(LOCATION_UNAVAILABLE);
+      }
       return;
     }
 
     navigator.geolocation.getCurrentPosition(
       ({ coords }) => {
+        if (!canUpdateState()) return;
         const nearbyBanks = sortByDistance(WASTE_BANKS, {
           latitude: coords.latitude,
           longitude: coords.longitude,
@@ -41,22 +51,33 @@ const WasteBankPage = () => {
         setStatus(nearbyBanks.length ? 'success' : 'empty');
       },
       () => {
+        if (!canUpdateState()) return;
         setStatus('error');
         setErrorMessage(LOCATION_ERROR);
-      }
+      },
+      { timeout: 10000, maximumAge: 300000, enableHighAccuracy: false }
     );
   }, []);
 
   useEffect(() => {
+    isMountedRef.current = true;
     requestLocation();
+    return () => {
+      isMountedRef.current = false;
+      requestGenerationRef.current += 1;
+    };
   }, [requestLocation]);
 
   return (
-    <main className="waste-bank-page" id="main-content">
+    <main
+      className="waste-bank-page"
+      id="main-content"
+      aria-labelledby="waste-bank-page-title"
+    >
       <header className="waste-bank-page__header">
         <div>
           <p className="waste-bank-page__eyebrow">Jelajah lingkungan</p>
-          <h1>Bank Sampah Terdekat</h1>
+          <h1 id="waste-bank-page-title">Bank Sampah Terdekat</h1>
           <p className="waste-bank-page__intro">
             Temukan tempat setor sampah terdekat dari lokasi Anda.
           </p>
@@ -90,42 +111,50 @@ const WasteBankPage = () => {
       )}
 
       {status === 'success' && (
-        <section aria-label="Daftar bank sampah" className="waste-bank-page__list">
+        <section
+          aria-labelledby="waste-bank-list-title"
+          className="waste-bank-page__list"
+        >
           <div className="waste-bank-page__list-heading">
-            <h2>{banks.length} lokasi ditemukan</h2>
+            <h2 id="waste-bank-list-title">{banks.length} lokasi ditemukan</h2>
             <span>Diurutkan dari yang terdekat</span>
           </div>
-          {banks.map((bank) => (
-            <Card key={bank.id} className="waste-bank-card" padding="lg" hoverable>
-              <div className="waste-bank-card__topline">
-                <h2>{bank.name}</h2>
-                <Badge category={bank.operatingStatus === 'Buka' ? 'organik' : 'B3'} size="sm" />
-              </div>
-              <p className="waste-bank-card__distance">
-                <MapPin size={16} aria-hidden="true" /> {formatDistance(bank.distanceKm)}
-              </p>
-              <p className="waste-bank-card__address">{bank.address}</p>
-              <p className="waste-bank-card__hours">
-                <Clock3 size={16} aria-hidden="true" /> {bank.operatingHours}
-              </p>
-              <div className="waste-bank-card__materials">
-                <span className="waste-bank-card__label">Menerima:</span>
-                {bank.acceptedMaterials.map((material) => (
-                  <span className="waste-bank-card__material" key={material}>
-                    {material}
-                  </span>
-                ))}
-              </div>
-              <a
-                className="waste-bank-card__directions"
-                href={buildGoogleMapsDirectionsUrl(bank.latitude, bank.longitude)}
-                target="_blank"
-                rel="noreferrer"
-              >
-                Petunjuk arah <ExternalLink size={15} aria-hidden="true" />
-              </a>
-            </Card>
-          ))}
+          <ul className="waste-bank-page__cards" aria-label="Daftar bank sampah">
+            {banks.map((bank) => (
+              <li key={bank.id}>
+                <Card as="article" className="waste-bank-card" padding="lg" hoverable>
+                  <div className="waste-bank-card__topline">
+                    <h3>{bank.name}</h3>
+                    <span className="waste-bank-card__status">{bank.operatingStatus}</span>
+                  </div>
+                  <p className="waste-bank-card__distance">
+                    <MapPin size={16} aria-hidden="true" /> {formatDistance(bank.distanceKm)}
+                  </p>
+                  <p className="waste-bank-card__address">{bank.address}</p>
+                  <p className="waste-bank-card__hours">
+                    <Clock3 size={16} aria-hidden="true" /> {bank.operatingHours}
+                  </p>
+                  <div className="waste-bank-card__materials">
+                    <span className="waste-bank-card__label">Menerima:</span>
+                    {bank.acceptedMaterials.map((material) => (
+                      <span className="waste-bank-card__material" key={material}>
+                        {material}
+                      </span>
+                    ))}
+                  </div>
+                  <a
+                    className="waste-bank-card__directions"
+                    href={buildGoogleMapsDirectionsUrl(bank.latitude, bank.longitude)}
+                    target="_blank"
+                    rel="noreferrer"
+                    aria-label={`Lihat rute ke ${bank.name}`}
+                  >
+                    Petunjuk arah <ExternalLink size={15} aria-hidden="true" />
+                  </a>
+                </Card>
+              </li>
+            ))}
+          </ul>
         </section>
       )}
 
@@ -163,8 +192,14 @@ const WasteBankPage = () => {
           color: var(--color-text-secondary);
         }
         .waste-bank-page__list {
+          display: block;
+        }
+        .waste-bank-page__cards {
           display: grid;
           gap: 16px;
+          margin: 0;
+          padding: 0;
+          list-style: none;
         }
         .waste-bank-page__list-heading {
           display: flex;
@@ -194,7 +229,12 @@ const WasteBankPage = () => {
           justify-content: space-between;
           gap: 12px;
         }
-        .waste-bank-card__topline h2 { margin: 0; font-size: 1.15rem; }
+        .waste-bank-card__topline h3 { margin: 0; font-size: 1.15rem; }
+        .waste-bank-card__status {
+          color: var(--color-primary-dark);
+          font-size: .85rem;
+          font-weight: 700;
+        }
         .waste-bank-card__distance, .waste-bank-card__hours {
           display: flex;
           align-items: center;

@@ -28,6 +28,11 @@ describe('WasteBankPage', () => {
 
     expect(screen.getByText('Mencari bank sampah terdekat...')).toBeInTheDocument();
     expect(getCurrentPosition).toHaveBeenCalledOnce();
+    expect(getCurrentPosition).toHaveBeenCalledWith(
+      expect.any(Function),
+      expect.any(Function),
+      { timeout: 10000, maximumAge: 300000, enableHighAccuracy: false }
+    );
   });
 
   it('sorts the actual waste bank dataset by distance after a successful request', async () => {
@@ -44,7 +49,7 @@ describe('WasteBankPage', () => {
     });
 
     const names = screen
-      .getAllByRole('heading', { level: 2 })
+      .getAllByRole('heading', { level: 3 })
       .map((heading) => heading.textContent)
       .filter((name) => WASTE_BANKS.some((bank) => bank.name === name));
     const expectedNames = sortByDistance(WASTE_BANKS, {
@@ -53,8 +58,10 @@ describe('WasteBankPage', () => {
     }).map((bank) => bank.name);
     expect(names).toEqual(expectedNames);
     expect(screen.getByText('Jl. Kebon Jeruk No. 10, Jakarta Barat')).toBeInTheDocument();
+    expect(screen.getAllByText('Buka').length).toBeGreaterThan(0);
     expect(screen.getAllByText('Plastik').length).toBeGreaterThan(0);
-    expect(screen.getAllByRole('link', { name: /petunjuk arah/i })[0]).toHaveAttribute(
+    expect(screen.getByRole('list', { name: 'Daftar bank sampah' })).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Lihat rute ke Bank Sampah Melati' })).toHaveAttribute(
       'target',
       '_blank'
     );

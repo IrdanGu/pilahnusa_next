@@ -12,6 +12,7 @@ const Card = ({
   shadow = 'md',
   style,
   id,
+  as: Component = 'div',
 }) => {
   const paddingMap = { sm: '12px', md: '20px', lg: '28px', none: '0' };
   const shadowMap = {
@@ -22,7 +23,7 @@ const Card = ({
   };
 
   return (
-    <div
+    <Component
       id={id}
       className={`card ${hoverable ? 'card--hoverable' : ''} ${onClick ? 'card--clickable' : ''} ${className}`}
       onClick={onClick}
@@ -60,7 +61,7 @@ const Card = ({
           outline-offset: 2px;
         }
       `}</style>
-    </div>
+    </Component>
   );
 };
 
