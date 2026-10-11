@@ -22,20 +22,9 @@ Aplikasi ini menggunakan frontend React + Vite, backend Node.js/Express, model k
 - Machine Learning: TensorFlow.js
 - AI Chatbot: Gemini API
 
-## Tim Pengembang
-
-| Nama                    | ID             | Learning Path            | Universitas                 |
-| ----------------------- | -------------- | ------------------------ | --------------------------- |
-| Galih Rizaldy           | CACC246D6Y0535 | AI Engineer              | Universitas Kuningan        |
-| Ema Maleni              | CFCC174D6X0683 | Full-Stack Web Developer | Universitas Primakara       |
-| Irdan Guntara           | CACC246D6Y0874 | AI Engineer              | Universitas Kuningan        |
-| Nayarah Atmawardani     | CFCC362D6X1422 | Full-Stack Web Developer | Universitas Sulawesi Barat  |
-| Ryan Dwi Antoni         | CDCC284D6Y1670 | Data Scientist           | Universitas Negeri Surabaya |
-| Gisca Oktavia Ramadhani | CDCC246D6X2496 | Data Scientist           | Universitas Kuningan        |
-
 ## Dashboard Analisis Dataset
 
-Analisis dataset oleh tim Data Scientist tersedia melalui Streamlit:
+Analisis dataset tersedia melalui Streamlit:
 
 [PilahNusa AI Dashboard](https://pilahnusaaidashboard.streamlit.app/)
 
@@ -290,4 +279,4 @@ Menjalankan ESLint untuk memeriksa kualitas kode.
 - Jika chatbot gagal, pastikan `GEMINI_API_KEY` sudah benar di file `.env`.
 - Jika klasifikasi gagal saat server pertama kali dijalankan, cek apakah folder `server/data/tfjs_model/` berisi `model.json` dan semua file `.bin`.
 - Jika frontend tidak dapat mengakses API, pastikan backend berjalan di port `5000`.
-- Jika port `5173` atau `5000` sudah digunakan, hentikan proses yang memakai port tersebut atau ubah konfigurasi port.
+- Jika port `5173` atau `5000` sudah digunakan, hentikan proses yang menggunakan port tersebut atau ubah konfigurasi port.
