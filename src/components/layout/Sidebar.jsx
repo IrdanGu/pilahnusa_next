@@ -6,7 +6,6 @@ import {
   Clock,
   BookOpen,
   Leaf,
-  Users,
   BotMessageSquare,
   MapPin,
 } from 'lucide-react';
@@ -17,7 +16,6 @@ const NAV_ITEMS = [
   { path: '/history', label: 'Riwayat', icon: Clock },
   { path: '/chatbot', label: 'Chatbot', icon: BotMessageSquare },
   { path: '/bank-sampah', label: 'Bank Sampah', icon: MapPin },
-  { path: '/team', label: 'Tim Pengembang', icon: Users },
   { path: '/guide', label: 'Cara Menggunakan', icon: BookOpen },
 ];
 
