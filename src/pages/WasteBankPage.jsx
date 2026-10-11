@@ -43,10 +43,15 @@ const WasteBankPage = () => {
     navigator.geolocation.getCurrentPosition(
       ({ coords }) => {
         if (!canUpdateState()) return;
-        const nearbyBanks = sortByDistance(WASTE_BANKS, {
+        const nearbyBanks = sortByDistance(
+          WASTE_BANKS.filter(
+            (bank) => Number.isFinite(bank.latitude) && Number.isFinite(bank.longitude)
+          ),
+          {
           latitude: coords.latitude,
           longitude: coords.longitude,
-        });
+          }
+        );
         setBanks(nearbyBanks);
         setStatus(nearbyBanks.length ? 'success' : 'empty');
       },
@@ -140,9 +145,19 @@ const WasteBankPage = () => {
                     <MapPin size={16} aria-hidden="true" /> {formatDistance(bank.distanceKm)}
                   </p>
                   <p className="waste-bank-card__address">{bank.address}</p>
+                  {bank.phone && (
+                    <p className="waste-bank-card__phone">
+                      <a href={`tel:${bank.phone}`}>{bank.phone}</a>
+                    </p>
+                  )}
                   <p className="waste-bank-card__hours">
                     <Clock3 size={16} aria-hidden="true" /> {bank.operatingHours}
                   </p>
+                  {Number.isFinite(bank.capacityTonsPerDay) && (
+                    <p className="waste-bank-card__capacity">
+                      Kapasitas: {bank.capacityTonsPerDay} ton/hari
+                    </p>
+                  )}
                   <div className="waste-bank-card__materials">
                     <span className="waste-bank-card__label">Menerima:</span>
                     {bank.acceptedMaterials.map((material) => (
@@ -151,15 +166,17 @@ const WasteBankPage = () => {
                       </span>
                     ))}
                   </div>
-                  <a
-                    className="waste-bank-card__directions"
-                    href={buildGoogleMapsDirectionsUrl(bank.latitude, bank.longitude)}
-                    target="_blank"
-                    rel="noreferrer"
-                    aria-label={`Lihat rute ke ${bank.name}`}
-                  >
-                    Petunjuk arah <ExternalLink size={15} aria-hidden="true" />
-                  </a>
+                  {Number.isFinite(bank.latitude) && Number.isFinite(bank.longitude) && (
+                    <a
+                      className="waste-bank-card__directions"
+                      href={buildGoogleMapsDirectionsUrl(bank.latitude, bank.longitude)}
+                      target="_blank"
+                      rel="noreferrer"
+                      aria-label={`Lihat rute ke ${bank.name}`}
+                    >
+                      Petunjuk arah <ExternalLink size={15} aria-hidden="true" />
+                    </a>
+                  )}
                 </Card>
               </li>
             ))}

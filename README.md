@@ -228,8 +228,11 @@ http://localhost:5000
 2. Izinkan akses lokasi saat diminta oleh browser. Fitur ini memerlukan izin lokasi untuk menghitung jarak dari posisi Anda.
 3. Daftar bank sampah akan diurutkan dari yang terdekat. Jika izin ditolak atau lokasi gagal diperoleh, pilih **Coba lagi** setelah mengubah izin browser.
 4. Aplikasi tidak menampilkan jarak palsu: daftar hanya ditampilkan setelah lokasi berhasil diperoleh.
-5. Data bank sampah bersifat statis dan tersimpan di `src/data/wasteBanks.js`.
-6. Pilih **Petunjuk arah** untuk membuka rute ke bank sampah tersebut di Google Maps pada tab baru.
+5. Data bank sampah dinormalisasi dari sheet **BANK SAMPAH** pada `src/data/data_excel/Data TPS3R, Bank Sampah dan Komunitas Rongsok.xlsx`, lalu disimpan secara statis di `src/data/wasteBanks.js`.
+6. Semua baris dengan koordinat yang valid ditampilkan, termasuk bank sampah berstatus **Aktif** maupun **Tidak Aktif**.
+7. Baris tanpa koordinat yang valid tidak ditampilkan karena jarak dan petunjuk arah tidak dapat dihitung.
+8. Workbook tidak menyediakan jam operasional maupun informasi material yang diterima, sehingga UI menampilkan label **Tidak tersedia** untuk kedua informasi tersebut.
+9. Pilih **Petunjuk arah** untuk membuka rute ke bank sampah tersebut di Google Maps pada tab baru.
 
 ## Script yang Tersedia
 
