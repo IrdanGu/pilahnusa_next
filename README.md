@@ -279,4 +279,4 @@ Menjalankan ESLint untuk memeriksa kualitas kode.
 - Jika chatbot gagal, pastikan `GEMINI_API_KEY` sudah benar di file `.env`.
 - Jika klasifikasi gagal saat server pertama kali dijalankan, cek apakah folder `server/data/tfjs_model/` berisi `model.json` dan semua file `.bin`.
 - Jika frontend tidak dapat mengakses API, pastikan backend berjalan di port `5000`.
-- Jika port `5173` atau `5000` sudah digunakan, hentikan proses yang menggunakan port tersebut atau ubah konfigurasi port.
+- Jika port `5173` atau `5000` sudah digunakan, hentikan proses yang memakai port tersebut atau ubah konfigurasi port.
