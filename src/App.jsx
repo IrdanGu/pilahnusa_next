@@ -7,7 +7,6 @@ import ScanPage from './pages/ScanPage';
 import ResultPage from './pages/ResultPage';
 import HistoryPage from './pages/HistoryPage';
 import GuidePage from './pages/GuidePage';
-import TeamPage from './pages/TeamPage';
 import ChatbotPage from './pages/ChatbotPage';
 import WasteBankPage from './pages/WasteBankPage';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -40,7 +39,6 @@ function App() {
               <Route path="/chatbot" element={<ChatbotPage />} />
               <Route path="/bank-sampah" element={<WasteBankPage />} />
               <Route path="/guide" element={<GuidePage />} />
-              <Route path="/team" element={<TeamPage />} />
             </Routes>
           </Layout>
 

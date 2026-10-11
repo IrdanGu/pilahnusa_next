@@ -27,6 +27,18 @@ test('returns normalized text from Gemini response', async () => {
       const body = JSON.parse(options.body);
       assert.equal(body.contents[0].parts[0].text.includes('PilahNusa'), true);
       assert.equal(body.contents[0].parts[0].text.includes('Bagaimana memilah botol plastik?'), true);
+      for (const removedIdentity of [
+        'Irdan Guntara',
+        'Galih Rizaldy',
+        'Ema Maleni',
+        'Nayarah Atmawardani',
+        'Ryan Dwi Antoni',
+        'Gisca Oktavia Ramadhani',
+        'CC26-PSU246',
+        'Tim pengembang',
+      ]) {
+        assert.equal(body.contents[0].parts[0].text.includes(removedIdentity), false);
+      }
 
       return {
         ok: true,
