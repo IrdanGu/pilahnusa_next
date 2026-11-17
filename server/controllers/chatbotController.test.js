@@ -25,7 +25,7 @@ test('returns normalized text from Gemini response', async () => {
       assert.match(url, /key=test-key/);
 
       const body = JSON.parse(options.body);
-      assert.equal(body.contents[0].parts[0].text.includes('PilahNusa'), true);
+      assert.equal(body.contents[0].parts[0].text.includes('BilahBeu'), true);
       assert.equal(body.contents[0].parts[0].text.includes('Bagaimana memilah botol plastik?'), true);
       for (const removedIdentity of [
         'Irdan Guntara',

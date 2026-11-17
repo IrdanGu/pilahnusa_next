@@ -9,7 +9,7 @@ const STEPS = [
   {
     stepNumber: 1,
     icon: <Smartphone />,
-    title: 'Buka aplikasi PilahNusa AI',
+    title: 'Buka aplikasi BilahBeu AI',
     description: 'Akses aplikasi melalui browser di perangkat mobile Anda',
     color: '#22C55E',
   },
@@ -72,7 +72,7 @@ const GuidePage = () => {
         </div>
         <div className="guide-header__content">
           <h1 className="guide-header__title">Cara Menggunakan</h1>
-          <p className="guide-header__subtitle">Panduan lengkap menggunakan PilahNusa AI</p>
+          <p className="guide-header__subtitle">Panduan lengkap menggunakan BilahBeu AI</p>
         </div>
       </header>
 

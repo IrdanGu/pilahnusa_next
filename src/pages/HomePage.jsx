@@ -30,13 +30,13 @@ const HomePage = () => {
           <div className="hero__brand-icon animate-bounce-subtle" aria-hidden="true">
             <img
               src="/images/logo.png"
-              alt="PilahNusa AI Logo"
+              alt="BilahBeu AI Logo"
               className="hero__brand-logo-img"
             />
           </div>
 
           <h1 className="hero__title" id="hero-title">
-            PilahNusa AI
+            BilahBeu AI
           </h1>
 
           <p className="hero__subtitle">
@@ -124,7 +124,7 @@ const HomePage = () => {
           Kategori Sampah
         </h2>
         <p className="home-categories__subtitle">
-          PilahNusa AI dapat mengklasifikasikan berbagai jenis sampah secara otomatis
+          BilahBeu AI dapat mengklasifikasikan berbagai jenis sampah secara otomatis
         </p>
         <div className="home-categories__grid" role="list">
           {CATEGORY_LIST.map((cat) => (

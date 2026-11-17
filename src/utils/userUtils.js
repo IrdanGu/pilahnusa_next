@@ -1,8 +1,8 @@
 /**
- * User utility helpers for PilahNusa AI
+ * User utility helpers for BilahBeu AI
  */
 
-const USER_ID_KEY = 'pilahnusa_user_id';
+const USER_ID_KEY = 'bilahbeu_user_id';
 
 /**
  * Generate a cryptographically secure RFC4122 v4 compliant UUID

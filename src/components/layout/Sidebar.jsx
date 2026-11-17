@@ -29,11 +29,11 @@ const Sidebar = () => {
       <div className="sidebar__logo">
         <img
           src="/images/logo.png"
-          alt="PilahNusa AI Logo"
+          alt="BilahBeu AI Logo"
           className="sidebar__logo-img"
         />
         <div className="sidebar__logo-text">
-          <span className="sidebar__app-name">PilahNusa AI</span>
+          <span className="sidebar__app-name">BilahBeu AI</span>
           <span className="sidebar__app-subtitle">Waste Classifier</span>
         </div>
       </div>

@@ -10,7 +10,7 @@ import {
   checkFeedbackStatusFromSupabase
 } from '../services/supabaseClient';
 
-const FEEDBACK_SUBMITTED_KEY = 'pilahnusa_feedback_submitted';
+const FEEDBACK_SUBMITTED_KEY = 'bilahbeu_feedback_submitted';
 
 /**
  * Custom hook for managing scan history and general user feedback via localStorage & Supabase
@@ -38,7 +38,7 @@ const useHistory = () => {
         if (historyRes.success && historyRes.data) {
           setHistory(historyRes.data);
           try {
-            localStorage.setItem('pilahnusa_history', JSON.stringify(historyRes.data));
+            localStorage.setItem('bilahbeu_history', JSON.stringify(historyRes.data));
           } catch (e) {
             console.error('Failed to sync Supabase history to localStorage:', e);
           }

@@ -15,7 +15,7 @@ const INITIAL_MESSAGES = [
     id: 'welcome',
     role: 'assistant',
     content:
-      'Halo! Saya asisten PilahNusa. Tanyakan apa saja tentang pemilahan sampah, daur ulang, kompos, limbah B3, atau cara membuang sampah dengan aman.',
+      'Halo! Saya asisten BilahBeu. Tanyakan apa saja tentang pemilahan sampah, daur ulang, kompos, limbah B3, atau cara membuang sampah dengan aman.',
   },
 ];
 
@@ -73,14 +73,14 @@ const ChatbotPage = () => {
           <BotMessageSquare size={24} />
         </div>
         <div>
-          <h1 className="chatbot-header__title">Chatbot PilahNusa</h1>
+          <h1 className="chatbot-header__title">Chatbot BilahBeu</h1>
           <p className="chatbot-header__subtitle">
             Asisten edukasi pemilahan sampah berbasis Gemini
           </p>
         </div>
       </header>
 
-      <section className="chatbot-shell" aria-label="Percakapan chatbot PilahNusa">
+      <section className="chatbot-shell" aria-label="Percakapan chatbot BilahBeu">
         <div className="chatbot-messages" role="log" aria-live="polite">
           {messages.map((message) => {
             const isUser = message.role === 'user';
@@ -143,7 +143,7 @@ const ChatbotPage = () => {
             placeholder="Tanya cara memilah sampah..."
             rows={2}
             disabled={isSending}
-            aria-label="Pertanyaan untuk chatbot PilahNusa"
+            aria-label="Pertanyaan untuk chatbot BilahBeu"
             onKeyDown={(event) => {
               if (event.key === 'Enter' && !event.shiftKey) {
                 event.preventDefault();
