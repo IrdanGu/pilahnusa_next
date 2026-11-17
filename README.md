@@ -1,8 +1,8 @@
-# PilahNusa AI
+# BilahBeu AI
 
-![Tampilan UI PilahNusa AI](public/ui-interface.png)
+![Tampilan UI BilahBeu AI](public/ui-interface.png)
 
-PilahNusa AI adalah aplikasi web mobile-first untuk membantu pengguna memilah sampah melalui foto. Pengguna dapat mengambil atau mengunggah gambar sampah, lalu aplikasi akan mengklasifikasikan jenis sampah tersebut dan menampilkan panduan pembuangan, tips daur ulang, serta riwayat pemindaian.
+BilahBeu AI adalah aplikasi web mobile-first untuk membantu pengguna memilah sampah melalui foto. Pengguna dapat mengambil atau mengunggah gambar sampah, lalu aplikasi akan mengklasifikasikan jenis sampah tersebut dan menampilkan panduan pembuangan, tips daur ulang, serta riwayat pemindaian.
 
 Aplikasi ini menggunakan frontend React + Vite, backend Node.js/Express, model klasifikasi gambar berbasis TensorFlow.js, dan chatbot edukasi pemilahan sampah yang terhubung ke Gemini API.
 
@@ -26,12 +26,12 @@ Aplikasi ini menggunakan frontend React + Vite, backend Node.js/Express, model k
 
 Analisis dataset tersedia melalui Streamlit:
 
-[PilahNusa AI Dashboard](https://pilahnusaaidashboard.streamlit.app/)
+[BilahBeu AI Dashboard](https://bilahbeuaidashboard.streamlit.app/)
 
 ## Struktur Proyek
 
 ```text
-PilahNusa-AI/
+BilahBeu-AI/
 ├── machine_learning/           # Script pelatihan dan konversi model AI
 ├── public/                     # Aset statis
 ├── server/                     # Aplikasi backend Express
@@ -77,13 +77,13 @@ git --version
 
 ```bash
 git clone <repository-url>
-cd PilahNusa-AI
+cd BilahBeu-AI
 ```
 
 Jika project sudah tersedia di komputer lokal, cukup masuk ke folder project:
 
 ```bash
-cd PilahNusa-AI
+cd BilahBeu-AI
 ```
 
 ### 3. Install Dependensi

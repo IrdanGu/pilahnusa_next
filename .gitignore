@@ -249,7 +249,7 @@ Thumbs.db
 
 # Machine Learning Models
 *.tflite
-server/data/pilahnusa_model_final.tflite
+server/data/bilahbeu_model_final.tflite
 
 # Uploaded Files
 server/uploads/*

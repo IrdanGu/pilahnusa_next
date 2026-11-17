@@ -94,9 +94,9 @@ const ResultPage = () => {
   }
 
   const handleShare = async () => {
-    const text = `Saya baru saja menscan sampah menggunakan PilahNusa AI!\n${result.name} — Kategori: ${result.category}\n#PilahNusaAI #GoGreen`;
+    const text = `Saya baru saja menscan sampah menggunakan BilahBeu AI!\n${result.name} — Kategori: ${result.category}\n#BilahBeuAI #GoGreen`;
     if (navigator.share) {
-      await navigator.share({ title: 'PilahNusa AI — Hasil Scan', text });
+      await navigator.share({ title: 'BilahBeu AI — Hasil Scan', text });
     } else {
       await navigator.clipboard.writeText(text);
       alert('Teks berhasil disalin!');

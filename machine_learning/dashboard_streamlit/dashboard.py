@@ -4,7 +4,7 @@ from PIL import Image
 from streamlit_option_menu import option_menu
 
 st.set_page_config(
-    page_title="PilahNusaAI Dashboard",
+    page_title="BilahBeuAI Dashboard",
     page_icon="🌿",
     layout="wide"
 )
@@ -144,7 +144,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 with st.sidebar:
-    st.markdown("<h3 style='color: #ffffff; font-weight: 700; margin-top:10px; margin-bottom: 25px; letter-spacing: -0.5px;'>🌿 PilahNusa AI</h3>", unsafe_allow_html=True)
+    st.markdown("<h3 style='color: #ffffff; font-weight: 700; margin-top:10px; margin-bottom: 25px; letter-spacing: -0.5px;'>🌿 BilahBeu AI</h3>", unsafe_allow_html=True)
     
     menu_select = option_menu(
         menu_title=None,
@@ -192,7 +192,7 @@ with col1:
     logo = Image.open("assets/logo.png")
     st.image(logo, width=170)
 with col2:
-    st.markdown('<div class="main-title">🌿 PilahNusaAI Dashboard</div>', unsafe_allow_html=True)
+    st.markdown('<div class="main-title">🌿 BilahBeuAI Dashboard</div>', unsafe_allow_html=True)
     st.markdown('<div class="subtitle">Dashboard Analisis Visual Dataset Klasifikasi Sampah Rumah Tangga Berbasis AI </div>', unsafe_allow_html=True)
 
 st.divider()
@@ -264,6 +264,6 @@ st.markdown("""
 
 st.markdown("""
 <div class="footer">
-🌿 PilahNusaAI Dashboard
+🌿 BilahBeuAI Dashboard
 </div>
 """, unsafe_allow_html=True)

@@ -2,7 +2,7 @@
 
 ## Ringkasan
 
-PilahNusa AI akan memiliki halaman khusus untuk menemukan bank sampah terdekat berdasarkan lokasi perangkat pengguna. MVP menggunakan dataset statis internal aplikasi, menampilkan hasil sebagai daftar yang diurutkan berdasarkan jarak, dan menyediakan tombol untuk membuka rute Google Maps.
+BilahBeu AI akan memiliki halaman khusus untuk menemukan bank sampah terdekat berdasarkan lokasi perangkat pengguna. MVP menggunakan dataset statis internal aplikasi, menampilkan hasil sebagai daftar yang diurutkan berdasarkan jarak, dan menyediakan tombol untuk membuka rute Google Maps.
 
 ## Tujuan dan Batasan
 

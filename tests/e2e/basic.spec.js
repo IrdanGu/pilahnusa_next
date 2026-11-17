@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-test.describe('PilahNusa AI E2E Basic Flow', () => {
+test.describe('BilahBeu AI E2E Basic Flow', () => {
   test('should load landing page, navigate to Chatbot, and interact with the chat composer', async ({ page }) => {
     // 1. Visit the home page
     await page.goto('/');
@@ -8,7 +8,7 @@ test.describe('PilahNusa AI E2E Basic Flow', () => {
     // 2. Verify that the home page has loaded correctly by checking the main logo / brand text
     const brand = page.locator('.sidebar__app-name');
     await expect(brand).toBeVisible();
-    await expect(brand).toHaveText('PilahNusa AI');
+    await expect(brand).toHaveText('BilahBeu AI');
 
     // Also assert the greeting text in the main content
     const heroTitle = page.locator('h1');
@@ -25,7 +25,7 @@ test.describe('PilahNusa AI E2E Basic Flow', () => {
     // 5. Verify the Chatbot page headers and components
     const chatbotHeader = page.locator('.chatbot-header__title');
     await expect(chatbotHeader).toBeVisible();
-    await expect(chatbotHeader).toHaveText('Chatbot PilahNusa');
+    await expect(chatbotHeader).toHaveText('Chatbot BilahBeu');
 
     // 6. Locate the input composer
     const composerInput = page.locator('.chatbot-composer__input');

@@ -4,7 +4,7 @@ import { Star, Send, X } from 'lucide-react';
 import { useToast } from '../ui/Toast';
 
 /**
- * FeedbackCard — Form Kuesioner Kepuasan Pengguna for PilahNusa AI
+ * FeedbackCard — Form Kuesioner Kepuasan Pengguna for BilahBeu AI
  * Renders via React Portal on document.body to overlay everything including sidebars.
  * @param {function} onSubmit - submitUserFeedback(rating, message) callback from hook
  */
@@ -121,7 +121,7 @@ const FeedbackCard = ({ onSubmit }) => {
         </button>
 
         <div className="feedback-header">
-          <h3 className="feedback-title">Evaluasi Penggunaan PilahNusa AI</h3>
+          <h3 className="feedback-title">Evaluasi Penggunaan BilahBeu AI</h3>
           <p className="feedback-subtitle">
             Bantu kami meningkatkan kualitas layanan dengan mengisi kuesioner singkat ini.
           </p>

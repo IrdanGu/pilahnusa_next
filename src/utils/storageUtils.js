@@ -1,8 +1,8 @@
 /**
- * LocalStorage utility helpers for PilahNusa AI
+ * LocalStorage utility helpers for BilahBeu AI
  */
 
-const HISTORY_KEY = 'pilahnusa_history';
+const HISTORY_KEY = 'bilahbeu_history';
 const MAX_HISTORY_ITEMS = 50;
 
 /**
