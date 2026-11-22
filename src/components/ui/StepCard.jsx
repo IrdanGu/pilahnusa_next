@@ -33,7 +33,8 @@ const StepCard = ({ stepNumber, icon, title, description, color = '#22C55E' }) =
           align-items: center;
           text-align: center;
           gap: 16px;
-          min-width: 200px;
+          min-width: 0;
+          width: 100%;
           position: relative;
         }
 
@@ -72,15 +73,15 @@ const StepCard = ({ stepNumber, icon, title, description, color = '#22C55E' }) =
           width: 28px;
           height: 28px;
           border-radius: 50%;
-          background: #22C55E;
+          background: var(--color-primary-btn, #15803D);
           color: white;
           font-size: 0.8125rem;
           font-weight: 700;
           display: flex;
           align-items: center;
           justify-content: center;
-          border: 3px solid var(--color-white);
-          box-shadow: 0 2px 8px rgba(34, 197, 94, 0.3);
+          border: 3px solid var(--color-surface, var(--color-white));
+          box-shadow: 0 2px 8px rgba(21, 128, 61, 0.3);
           font-family: var(--font-heading);
         }
 

@@ -32,5 +32,19 @@ export const formatDistance = (distanceKm) =>
     ? `${Math.round(distanceKm * 1000)} m`
     : `${distanceKm.toFixed(2).replace('.', ',')} km`;
 
-export const buildGoogleMapsDirectionsUrl = (latitude, longitude) =>
-  `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(`${latitude},${longitude}`)}`;
+export const buildGoogleMapsDirectionsUrl = (latitude, longitude, origin = null) => {
+  const params = new URLSearchParams({
+    api: '1',
+    destination: `${latitude},${longitude}`,
+  });
+
+  if (
+    origin &&
+    Number.isFinite(origin.latitude) &&
+    Number.isFinite(origin.longitude)
+  ) {
+    params.set('origin', `${origin.latitude},${origin.longitude}`);
+  }
+
+  return `https://www.google.com/maps/dir/?${params.toString()}`;
+};

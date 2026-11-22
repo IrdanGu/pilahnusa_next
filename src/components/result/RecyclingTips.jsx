@@ -33,11 +33,11 @@ const RecyclingTips = ({ tips = [] }) => {
 
       <style>{`
         .recycling-tips {
-          background: var(--color-white);
+          background: var(--color-surface-elevated, var(--color-surface));
           border-radius: var(--radius-xl);
           padding: 18px 20px;
           box-shadow: var(--shadow-sm);
-          border: 1px solid var(--color-border-light);
+          border: 1px solid var(--color-border);
           display: flex;
           flex-direction: column;
           gap: 12px;

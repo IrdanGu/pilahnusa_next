@@ -107,17 +107,11 @@
   100% { background-position: 200% 0; }
 }
 
-/* --- Bounce --- */
-@keyframes bounceIn {
+/* --- Smooth Scale Pop --- */
+@keyframes popIn {
   0% {
     opacity: 0;
-    transform: scale(0.3);
-  }
-  50% {
-    transform: scale(1.05);
-  }
-  70% {
-    transform: scale(0.9);
+    transform: scale(0.92);
   }
   100% {
     opacity: 1;
@@ -191,8 +185,8 @@
   animation: spinSlow 8s linear infinite;
 }
 
-.animate-bounce-in {
-  animation: bounceIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+.animate-pop-in {
+  animation: popIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
 
 /* --- Staggered children animations --- */
@@ -219,4 +213,24 @@
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
   border-radius: var(--radius-md);
+}
+
+.page-enter {
+  animation: slideUp 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .skeleton {
+    animation: none;
+    background: var(--color-bg-secondary);
+  }
 }

@@ -6,6 +6,7 @@ import { v4 as uuidv4 } from 'uuid';
 import HistoryModel from '../models/HistoryModel.js';
 import { localFileHandler } from '../localFileHandler.js';
 import sharp from 'sharp';
+import { validateImageMagicBytes } from '../middleware/upload.js';
 
 // Set to 'graph' for tfjs_graph_model or 'layers' for layers-model
 
@@ -180,20 +181,52 @@ const CLASS_DATA_MAP = {
 
 // --- Model Loading (Singleton) ---
 let model = null;
+let modelPromise = null;
+let activeExecutions = 0;
+const executionQueue = [];
+
+const runWithExecutionQueue = async (task) => {
+  if (activeExecutions >= 2) {
+    await new Promise((resolve) => executionQueue.push(resolve));
+  }
+  activeExecutions++;
+  try {
+    return await task();
+  } finally {
+    activeExecutions--;
+    const next = executionQueue.shift();
+    if (next) next();
+  }
+};
 
 async function loadModel() {
   if (model) return model;
-  const modelPath = path.join(__dirname, '../data/tfjs_model/model.json');
-  console.log('[AI] Loading TensorFlow.js model from:', modelPath);
-  // Use localFileHandler for both graph and layers models from filesystem
-  model = await tfHelper.loadGraphModel(localFileHandler(modelPath));
-  console.log('[AI] Model loaded and ready.');
-  return model;
+  if (modelPromise) return modelPromise;
+
+  modelPromise = (async () => {
+    const modelPath = path.join(__dirname, '../data/tfjs_model/model.json');
+    console.log('[AI] Loading TensorFlow.js model from:', modelPath);
+    const loadedModel = await tfHelper.loadGraphModel(localFileHandler(modelPath));
+    model = loadedModel;
+    console.log('[AI] Model loaded and ready.');
+    return model;
+  })();
+
+  try {
+    return await modelPromise;
+  } catch (error) {
+    modelPromise = null;
+    throw error;
+  }
 }
 
 export const __resetModelForTesting = () => {
+  if (model?.dispose) model.dispose();
   model = null;
+  modelPromise = null;
 };
+
+export const isModelReady = () => Boolean(model);
 
 // Pre-load the model when server starts
 loadModel().catch(err => console.error('[AI] Failed to pre-load model:', err));
@@ -205,7 +238,7 @@ async function preprocessImage(imagePath) {
   const imageBuffer = fs.readFileSync(imagePath);
 
   // Use sharp to resize and get raw pixel data (RGB, 224x224)
-  const { data, info } = await sharp(imageBuffer)
+  const { data, info } = await sharp(imageBuffer, { limitInputPixels: 25_000_000 })
     .resize(224, 224)
     .removeAlpha()
     .raw()
@@ -231,10 +264,24 @@ export const classifyWaste = async (req, res, next) => {
       return res.status(400).json({ error: 'No image file provided for classification' });
     }
 
+    try {
+      const fileStats = fs.statSync(imagePath);
+      if (!fileStats.isFile() || fileStats.size === 0) {
+        return res.status(400).json({ error: 'File bukan gambar JPEG/PNG/WebP yang valid.' });
+      }
+      const headerBuffer = fs.readFileSync(imagePath).subarray(0, 12);
+      const validMagicBytes = await validateImageMagicBytes(headerBuffer);
+      if (!validMagicBytes) {
+        return res.status(400).json({ error: 'File bukan gambar JPEG/PNG/WebP yang valid.' });
+      }
+    } catch {
+      return res.status(400).json({ error: 'File bukan gambar JPEG/PNG/WebP yang valid.' });
+    }
+
     // Create small thumbnail from the uploaded image for storage efficiency
     let thumbnailBase64 = null;
     try {
-      const thumbnailBuffer = await sharp(imagePath)
+      const thumbnailBuffer = await sharp(imagePath, { limitInputPixels: 25_000_000 })
         .resize(200, 200, { fit: 'inside' })
         .jpeg({ quality: 70 })
         .toBuffer();
@@ -255,8 +302,11 @@ export const classifyWaste = async (req, res, next) => {
       inputTensor = await preprocessImage(imagePath);
 
       // Run inference - graph models use execute() with named inputs
-      // Input name comes from model.json signature: 'input_layer_2'
-      const outputMap = aiModel.execute({ 'input_layer_2': inputTensor });
+      const signatureInputs = aiModel.signature?.inputs;
+      const inputName = signatureInputs
+        ? (Object.keys(signatureInputs)[0] || 'input_layer_2')
+        : 'input_layer_2';
+      const outputMap = await runWithExecutionQueue(async () => aiModel.execute({ [inputName]: inputTensor }));
       // Output can be a tensor or named map, handle both cases
       outputTensor = Array.isArray(outputMap) ? outputMap[0] : outputMap;
       probabilities = await outputTensor.data();
@@ -304,20 +354,22 @@ export const classifyWaste = async (req, res, next) => {
       result: finalResult
     };
 
-    HistoryModel.add(historyItem);
-
-    // Cleanup uploaded image
-    fs.unlink(imagePath, (err) => {
-      if (err) console.error('[Cleanup] Error deleting uploaded file:', err);
-    });
+    const userId = req.headers?.['x-user-id']?.trim();
+    await HistoryModel.add(historyItem, userId || 'anonymous');
 
     return res.status(200).json(historyItem);
 
   } catch (error) {
-    // Cleanup on error
-    if (imagePath) {
-      fs.unlink(imagePath, () => {});
-    }
     next(error);
+  } finally {
+    if (imagePath) {
+      try {
+        fs.unlink(imagePath, (err) => {
+          if (err && err.code !== 'ENOENT') console.error('[Cleanup] Error deleting uploaded file:', err);
+        });
+      } catch {
+        // Temporary files may already have been removed.
+      }
+    }
   }
 };

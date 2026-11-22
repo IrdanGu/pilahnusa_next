@@ -36,5 +36,10 @@ describe('geolocation utilities', () => {
     expect(buildGoogleMapsDirectionsUrl(-6.2, 106.8)).toBe(
       'https://www.google.com/maps/dir/?api=1&destination=-6.2%2C106.8'
     );
+    expect(
+      buildGoogleMapsDirectionsUrl(-6.2, 106.8, { latitude: -6.98, longitude: 108.45 })
+    ).toBe(
+      'https://www.google.com/maps/dir/?api=1&destination=-6.2%2C106.8&origin=-6.98%2C108.45'
+    );
   });
 });

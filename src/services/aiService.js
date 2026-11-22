@@ -1,5 +1,18 @@
 import axios from 'axios';
 
+const mapClassificationError = (error) => {
+  if (error.code === 'ECONNABORTED' || error.message?.includes('timeout')) {
+    return 'Koneksi terlalu lama. Periksa jaringan lalu coba lagi.';
+  }
+  if (!error.response) return 'Anda sedang offline atau server tidak dapat dijangkau. Periksa koneksi internet.';
+  const status = error.response.status;
+  if (status === 429) return 'Terlalu banyak permintaan. Tunggu beberapa saat lalu coba lagi.';
+  if (status === 413) return 'Ukuran gambar terlalu besar. Gunakan gambar di bawah 10 MB.';
+  if (status === 400) return 'Gambar atau permintaan tidak valid. Pilih foto sampah yang jelas.';
+  if (status >= 500) return 'Layanan AI sedang bermasalah. Silakan coba lagi sebentar.';
+  return error.response?.data?.error || 'Gagal memproses gambar. Silakan coba lagi.';
+};
+
 /**
  * Classify waste from a base64-encoded image using the Express backend
  * @param {string} base64Image - Base64 encoded image data
@@ -22,15 +35,16 @@ export const classifyWaste = async (base64Image) => {
 
     // Send to backend
     const response = await axios.post('/api/classifications', formData, {
+      timeout: 30000,
       headers: {
-        'Content-Type': 'multipart/form-data',
+        'X-User-Id': (typeof localStorage !== 'undefined' && localStorage.getItem('bilahbeu_user_id')) || 'anonymous',
       },
     });
 
     return response.data;
   } catch (error) {
     console.error('Error classifying waste:', error);
-    throw new Error(error.response?.data?.error || 'Gagal memproses gambar. Silakan coba lagi.');
+    throw new Error(mapClassificationError(error));
   }
 };
 

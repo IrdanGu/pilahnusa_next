@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect } from 'react';
-import { getHistory, saveHistoryItem, deleteHistoryItem, clearHistory } from '../utils/storageUtils';
+import { getHistory, saveHistoryItem, deleteHistoryItem, clearHistory, recordImpactScan } from '../utils/storageUtils';
 import { getOrCreateUserId } from '../utils/userUtils';
 import { 
   fetchHistoryFromSupabase, 
@@ -36,9 +36,15 @@ const useHistory = () => {
         // 2. Sync history from Supabase in the background
         const historyRes = await fetchHistoryFromSupabase(userId);
         if (historyRes.success && historyRes.data) {
-          setHistory(historyRes.data);
+          const mergedById = new Map();
+          getHistory().forEach((item) => item?.id && mergedById.set(item.id, item));
+          historyRes.data.forEach((item) => item?.id && mergedById.set(item.id, item));
+          const merged = [...mergedById.values()]
+            .sort((a, b) => new Date(b.timestamp || 0).getTime() - new Date(a.timestamp || 0).getTime())
+            .slice(0, 50);
+          setHistory(merged);
           try {
-            localStorage.setItem('bilahbeu_history', JSON.stringify(historyRes.data));
+            localStorage.setItem('bilahbeu_history', JSON.stringify(merged));
           } catch (e) {
             console.error('Failed to sync Supabase history to localStorage:', e);
           }
@@ -70,6 +76,7 @@ const useHistory = () => {
     // Save to local storage
     const updatedHistory = saveHistoryItem(item);
     setHistory(updatedHistory);
+    recordImpactScan(item);
 
     // Sync to Supabase in the background (does not block UI)
     const userId = getOrCreateUserId();

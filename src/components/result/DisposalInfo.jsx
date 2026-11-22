@@ -17,7 +17,7 @@ const DisposalInfo = ({ disposalGuide, environmentalImpact }) => {
         <div className="disposal-info__section">
           <div className="disposal-info__header">
             <div className="disposal-info__icon disposal-info__icon--blue">
-              <Trash2 size={16} color="#3B82F6" />
+              <Trash2 size={16} color="var(--color-info, var(--color-primary))" />
             </div>
             <h3 className="disposal-info__title">Cara Pembuangan</h3>
           </div>
@@ -30,7 +30,7 @@ const DisposalInfo = ({ disposalGuide, environmentalImpact }) => {
         <div className="disposal-info__section disposal-info__section--warning">
           <div className="disposal-info__header">
             <div className="disposal-info__icon disposal-info__icon--red">
-              <AlertTriangle size={16} color="#EF4444" />
+              <AlertTriangle size={16} color="var(--color-danger, #B91C1C)" />
             </div>
             <h3 className="disposal-info__title disposal-info__title--red">
               Dampak Jika Salah Kelola
@@ -47,18 +47,18 @@ const DisposalInfo = ({ disposalGuide, environmentalImpact }) => {
           gap: 12px;
         }
         .disposal-info__section {
-          background: var(--color-white);
+          background: var(--color-surface-elevated, var(--color-surface));
           border-radius: var(--radius-xl);
           padding: 18px 20px;
           box-shadow: var(--shadow-sm);
-          border: 1px solid var(--color-border-light);
+          border: 1px solid var(--color-border);
           display: flex;
           flex-direction: column;
           gap: 10px;
         }
         .disposal-info__section--warning {
-          background: #FEF9F9;
-          border-color: #FECACA;
+          background: var(--color-danger-bg, var(--color-bg-secondary));
+          border-color: var(--color-danger-border, var(--color-border));
         }
         .disposal-info__header {
           display: flex;
@@ -75,15 +75,15 @@ const DisposalInfo = ({ disposalGuide, environmentalImpact }) => {
           justify-content: center;
           flex-shrink: 0;
         }
-        .disposal-info__icon--blue { background: #EFF6FF; }
-        .disposal-info__icon--red  { background: #FEF2F2; }
+        .disposal-info__icon--blue {         background: var(--color-info-bg, var(--color-bg-secondary)); }
+        .disposal-info__icon--red  { background: var(--color-danger-bg, var(--color-bg-secondary)); }
         .disposal-info__title {
           font-size: 0.9375rem;
           font-weight: 700;
           margin: 0;
           color: var(--color-text-primary);
         }
-        .disposal-info__title--red { color: #B91C1C; }
+        .disposal-info__title--red { color: var(--color-danger, #B91C1C); }
         .disposal-info__text {
           font-size: 0.9rem;
           color: var(--color-text-secondary);
@@ -91,7 +91,7 @@ const DisposalInfo = ({ disposalGuide, environmentalImpact }) => {
           line-height: 1.65;
         }
         .disposal-info__text--warning {
-          color: #7F1D1D;
+          color: var(--color-danger-text, var(--color-text-primary));
         }
       `}</style>
     </div>

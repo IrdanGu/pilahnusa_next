@@ -74,10 +74,10 @@ const ClassificationResultCard = ({ result, imageUrl }) => {
 
         /* ── Hero card ── */
         .crc__hero {
-          background: var(--color-white);
+          background: var(--color-surface-elevated, var(--color-surface));
           border-radius: var(--radius-xl);
           box-shadow: var(--shadow-md);
-          border: 1px solid var(--color-border-light);
+          border: 1px solid var(--color-border);
           overflow: hidden;
         }
 
@@ -137,11 +137,11 @@ const ClassificationResultCard = ({ result, imageUrl }) => {
 
         /* ── Stats wrapper card ── */
         .crc__section-card {
-          background: var(--color-white);
+          background: var(--color-surface-elevated, var(--color-surface));
           border-radius: var(--radius-xl);
           padding: 18px 20px;
           box-shadow: var(--shadow-sm);
-          border: 1px solid var(--color-border-light);
+          border: 1px solid var(--color-border);
         }
 
         @media (max-width: 767px) {

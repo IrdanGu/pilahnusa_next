@@ -2,32 +2,79 @@
 <html lang="id">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/png" href="/images/logo.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+
+    <!-- Icons & PWA -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="alternate icon" type="image/png" href="/images/logo.png" />
+    <link rel="apple-touch-icon" href="/images/logo.png" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+
     <!-- Primary Meta Tags -->
-    <meta name="title" content="BilahBeu AI — Klasifikasi Sampah Cerdas & Daur Ulang" />
-    <meta name="description" content="BilahBeu AI membantu Anda memilah sampah organik & anorganik secara instan menggunakan teknologi kecerdasan buatan (AI) yang canggih dan mudah digunakan." />
-    <meta name="theme-color" content="#22C55E" />
-    
+    <title>BilahBeu AI — Pemilah Sampah Cerdas &amp; Daur Ulang</title>
+    <meta name="title" content="BilahBeu AI — Pemilah Sampah Cerdas &amp; Daur Ulang" />
+    <meta
+      name="description"
+      content="BilahBeu AI membantu Anda memilah sampah organik, anorganik, dan B3 secara instan dengan AI, melacak jejak dampak lingkungan, kuis pemilahan, serta menemukan bank sampah terdekat."
+    />
+    <meta name="keywords" content="pilah sampah, klasifikasi sampah AI, daur ulang, bank sampah, organik, anorganik, B3, BilahBeu AI" />
+    <meta name="theme-color" content="#15803D" />
+    <meta name="color-scheme" content="light dark" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="BilahBeu AI" />
+
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website" />
-    <meta property="og:title" content="BilahBeu AI — Klasifikasi Sampah Cerdas & Daur Ulang" />
-    <meta property="og:description" content="BilahBeu AI membantu Anda memilah sampah organik & anorganik secara instan menggunakan teknologi kecerdasan buatan (AI) yang canggih dan mudah digunakan." />
+    <meta property="og:locale" content="id_ID" />
+    <meta property="og:site_name" content="BilahBeu AI" />
+    <meta property="og:title" content="BilahBeu AI — Pemilah Sampah Cerdas &amp; Daur Ulang" />
+    <meta
+      property="og:description"
+      content="Pindai sampah dalam hitungan detik dengan AI, dapatkan panduan daur ulang, hitung penghematan CO₂ Anda, dan temukan bank sampah terdekat."
+    />
     <meta property="og:image" content="/images/logo.png" />
 
     <!-- Twitter -->
-    <meta property="twitter:card" content="summary" />
-    <meta property="twitter:title" content="BilahBeu AI — Klasifikasi Sampah Cerdas & Daur Ulang" />
-    <meta property="twitter:description" content="BilahBeu AI membantu Anda memilah sampah organik & anorganik secara instan menggunakan teknologi kecerdasan buatan (AI) yang canggih dan mudah digunakan." />
-    <meta property="twitter:image" content="/images/logo.png" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="BilahBeu AI — Pemilah Sampah Cerdas &amp; Daur Ulang" />
+    <meta
+      name="twitter:description"
+      content="Pindai sampah dengan AI, pelajari panduan pemilahan, ikut tantangan kuis, dan temukan bank sampah terdekat."
+    />
+    <meta name="twitter:image" content="/images/logo.png" />
 
-    <title>BilahBeu AI — Waste Classifier</title>
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=DM+Sans:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Anti-FOUC Theme Init -->
+    <script>
+      (function () {
+        try {
+          var saved = localStorage.getItem('bilahbeu_theme');
+          var prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var theme = saved === 'dark' || saved === 'light' ? saved : prefersDark ? 'dark' : 'light';
+          document.documentElement.setAttribute('data-theme', theme);
+          var meta = document.querySelector('meta[name="theme-color"]');
+          if (meta) meta.setAttribute('content', theme === 'dark' ? '#0B1117' : '#15803D');
+        } catch (e) {
+          /* ignore storage errors */
+        }
+      })();
+    </script>
   </head>
   <body>
+    <noscript>
+      <div style="padding: 24px; font-family: sans-serif; text-align: center;">
+        <h1>BilahBeu AI membutuhkan JavaScript</h1>
+        <p>Mohon aktifkan JavaScript pada browser Anda untuk menggunakan aplikasi BilahBeu AI.</p>
+      </div>
+    </noscript>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
   </body>

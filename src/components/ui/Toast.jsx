@@ -10,10 +10,10 @@ const ICONS = {
 };
 
 const COLORS = {
-  success: { bg: '#F0FDF4', border: '#86EFAC', text: '#15803D', icon: '#22C55E' },
-  error: { bg: '#FEF2F2', border: '#FECACA', text: '#DC2626', icon: '#EF4444' },
-  warning: { bg: '#FFFBEB', border: '#FDE68A', text: '#D97706', icon: '#F59E0B' },
-  info: { bg: '#EFF6FF', border: '#BFDBFE', text: '#1D4ED8', icon: '#3B82F6' },
+  success: { bg: 'var(--color-primary-bg)', border: 'var(--color-primary-light)', text: 'var(--color-primary-text)', icon: 'var(--color-primary)' },
+  error: { bg: 'var(--color-danger-bg)', border: 'var(--color-danger-text)', text: 'var(--color-danger-text)', icon: 'var(--color-danger)' },
+  warning: { bg: 'var(--color-accent-bg)', border: 'var(--color-accent-text)', text: 'var(--color-accent-text)', icon: 'var(--color-accent)' },
+  info: { bg: 'var(--color-info-bg)', border: 'var(--color-info-text)', text: 'var(--color-info-text)', icon: 'var(--color-info)' },
 };
 
 // Global counter for toast IDs
@@ -39,7 +39,7 @@ export const ToastProvider = ({ children }) => {
   }, []);
 
   return (
-    <ToastContext.Provider value={{ addToast }}>
+    <ToastContext.Provider value={{ addToast, removeToast }}>
       {children}
       <ToastContainer toasts={toasts} onRemove={removeToast} />
     </ToastContext.Provider>
@@ -51,10 +51,7 @@ export const ToastProvider = ({ children }) => {
  */
 export const useToast = () => {
   const context = useContext(ToastContext);
-  if (!context) {
-    throw new Error('useToast must be used within a ToastProvider');
-  }
-  return context;
+  return context || { addToast: () => {}, removeToast: () => {} };
 };
 
 /**
@@ -75,8 +72,8 @@ const Toast = ({ message, type = 'info', duration = 4000, onClose }) => {
 
   return (
     <div
-      role="alert"
-      aria-live="polite"
+      role={type === 'error' ? 'alert' : 'status'}
+      aria-live={type === 'error' ? 'assertive' : 'polite'}
       className={`toast ${isVisible ? 'toast--visible' : 'toast--hidden'}`}
       style={{
         backgroundColor: colors.bg,
@@ -127,7 +124,9 @@ const Toast = ({ message, type = 'info', duration = 4000, onClose }) => {
           background: none;
           border: none;
           cursor: pointer;
-          padding: 2px;
+          padding: 10px;
+          min-width: 44px;
+          min-height: 44px;
           display: flex;
           align-items: center;
           opacity: 0.7;
@@ -162,7 +161,7 @@ export const ToastContainer = ({ toasts = [], onRemove }) => {
       <style>{`
         .toast-container {
           position: fixed;
-          top: 20px;
+          bottom: max(20px, env(safe-area-inset-bottom));
           left: 50%;
           transform: translateX(-50%);
           z-index: 9999;
@@ -173,6 +172,13 @@ export const ToastContainer = ({ toasts = [], onRemove }) => {
         }
         .toast-container > * {
           pointer-events: all;
+        }
+        @media (max-width: 640px) {
+          .toast-container { left: 12px; right: 12px; transform: none; bottom: max(12px, env(safe-area-inset-bottom)); }
+          .toast { max-width: none; }
+        }
+        @media (max-width: 1023px) {
+          .toast-container { bottom: calc(84px + env(safe-area-inset-bottom, 0px)); }
         }
       `}</style>
     </div>

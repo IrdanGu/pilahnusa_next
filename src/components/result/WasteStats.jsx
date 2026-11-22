@@ -2,10 +2,10 @@ import React from 'react';
 import { Clock, TrendingUp, Recycle } from 'lucide-react';
 
 const ECONOMIC_VALUE_CONFIG = {
-  'Rendah':       { color: '#6B7280', bg: '#F3F4F6', border: '#D1D5DB' },
-  'Sedang':       { color: '#F59E0B', bg: '#FFFBEB', border: '#FDE68A' },
-  'Tinggi':       { color: '#22C55E', bg: '#F0FDF4', border: '#86EFAC' },
-  'Sangat Tinggi':{ color: '#3B82F6', bg: '#EFF6FF', border: '#BFDBFE' },
+  'Rendah':       { color: 'var(--color-text-secondary)', bg: 'var(--color-bg-secondary)', border: 'var(--color-border)' },
+  'Sedang':       { color: 'var(--color-warning-text, var(--color-text-primary))', bg: 'var(--color-warning-bg, var(--color-bg-secondary))', border: 'var(--color-warning-border, var(--color-border))' },
+  'Tinggi':       { color: 'var(--color-primary-dark)', bg: 'var(--color-primary-bg)', border: 'var(--color-primary-bg-md, var(--color-primary))' },
+  'Sangat Tinggi':{ color: 'var(--color-info-text, var(--color-text-primary))', bg: 'var(--color-info-bg, var(--color-bg-secondary))', border: 'var(--color-info-border, var(--color-border))' },
 };
 
 /**
@@ -23,7 +23,7 @@ const WasteStats = ({ decompositionTime, economicValue, recyclingPotential = [] 
       {decompositionTime && (
         <div className="waste-stats__card">
           <div className="waste-stats__icon waste-stats__icon--gray">
-            <Clock size={16} color="#6B7280" />
+            <Clock size={16} color="var(--color-text-secondary)" />
           </div>
           <div className="waste-stats__body">
             <span className="waste-stats__card-label">Waktu Terurai</span>
@@ -77,7 +77,7 @@ const WasteStats = ({ decompositionTime, economicValue, recyclingPotential = [] 
           padding: 14px 16px;
           background: var(--color-bg);
           border-radius: var(--radius-lg);
-          border: 1px solid var(--color-border-light);
+          border: 1px solid var(--color-border);
         }
         .waste-stats__icon {
           width: 36px;
@@ -88,9 +88,9 @@ const WasteStats = ({ decompositionTime, economicValue, recyclingPotential = [] 
           align-items: center;
           justify-content: center;
           background: var(--color-bg-secondary);
-          border: 1px solid var(--color-border-light);
+          border: 1px solid var(--color-border);
         }
-        .waste-stats__icon--gray { background: #F3F4F6; border-color: #D1D5DB; }
+        .waste-stats__icon--gray { background: var(--color-bg-secondary); border-color: var(--color-border); }
         .waste-stats__icon--green { background: var(--color-primary-bg); border-color: var(--color-primary-bg-md); }
         .waste-stats__body {
           display: flex;
@@ -114,7 +114,7 @@ const WasteStats = ({ decompositionTime, economicValue, recyclingPotential = [] 
           padding: 14px 16px;
           background: var(--color-bg);
           border-radius: var(--radius-lg);
-          border: 1px solid var(--color-border-light);
+          border: 1px solid var(--color-border);
           display: flex;
           flex-direction: column;
           gap: 10px;

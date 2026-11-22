@@ -9,9 +9,12 @@
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "server": "node server/server.js",
+    "start": "node server/server.js",
     "dev:all": "concurrently \"npm run dev\" \"npm run server\"",
     "test:e2e": "playwright test",
-    "test:unit": "vitest run"
+    "test:unit": "vitest run",
+    "test:server": "node --test server/controllers/*.test.js server/middleware/*.test.js server/models/*.test.js",
+    "test:all": "npm run test:unit && npm run test:server"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.105.4",
@@ -19,7 +22,6 @@
     "@tensorflow/tfjs-backend-wasm": "^4.22.0",
     "@tensorflow/tfjs-core": "^4.22.0",
     "axios": "^1.15.2",
-    "ci": "^2.3.0",
     "concurrently": "^9.2.1",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",

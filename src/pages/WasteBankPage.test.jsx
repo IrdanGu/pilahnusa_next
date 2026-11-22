@@ -30,11 +30,14 @@ vi.mock('../data/wasteBanks', async () => {
 import WasteBankPage from './WasteBankPage';
 import { WASTE_BANKS } from '../data/wasteBanks';
 import { sortByDistance } from '../utils/geolocationUtils';
+import { ToastProvider } from '../components/ui/Toast';
 
 const renderPage = () =>
   render(
     <MemoryRouter>
-      <WasteBankPage />
+      <ToastProvider>
+        <WasteBankPage />
+      </ToastProvider>
     </MemoryRouter>
   );
 
@@ -42,6 +45,7 @@ describe('WasteBankPage', () => {
   let getCurrentPosition;
 
   beforeEach(() => {
+    localStorage.clear();
     getCurrentPosition = vi.fn();
     Object.defineProperty(navigator, 'geolocation', {
       configurable: true,
@@ -57,7 +61,7 @@ describe('WasteBankPage', () => {
     expect(getCurrentPosition).toHaveBeenCalledWith(
       expect.any(Function),
       expect.any(Function),
-      { timeout: 10000, maximumAge: 300000, enableHighAccuracy: false }
+      { timeout: 10000, maximumAge: 0, enableHighAccuracy: true }
     );
   });
 
@@ -165,5 +169,38 @@ describe('WasteBankPage', () => {
         name: 'Lihat rute ke Bank Sampah Fixture Koordinat Tidak Valid',
       })
     ).not.toBeInTheDocument();
+  });
+
+  it('opens Jelajah Semua without geolocation and renders all bank cards', () => {
+    renderPage();
+    fireEvent.click(screen.getByRole('button', { name: 'Jelajah Semua' }));
+
+    expect(screen.getByRole('list', { name: 'Daftar bank sampah' })).toBeInTheDocument();
+    expect(getCurrentPosition).toHaveBeenCalled();
+  });
+
+  it('filters Jelajah results by search', () => {
+    renderPage();
+    fireEvent.click(screen.getByRole('button', { name: 'Jelajah Semua' }));
+
+    fireEvent.change(screen.getByPlaceholderText('Cari nama atau kecamatan...'), {
+      target: { value: 'Cilimus' },
+    });
+
+    expect(screen.getByText('Bank Sampah Cilimus')).toBeInTheDocument();
+  });
+
+  it('toggles and persists a favorite bank', () => {
+    renderPage();
+    fireEvent.click(screen.getByRole('button', { name: 'Jelajah Semua' }));
+
+    const favorite = screen.getAllByRole('button', { name: /favorit/i }).find((button) =>
+      button.getAttribute('aria-label')?.startsWith('Tambah')
+    );
+    expect(favorite).toBeDefined();
+    fireEvent.click(favorite);
+
+    expect(favorite).toHaveAttribute('aria-pressed', 'true');
+    expect(JSON.parse(localStorage.getItem('bilahbeu_favorite_banks'))).not.toEqual([]);
   });
 });

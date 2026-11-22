@@ -254,6 +254,7 @@ server/data/bilahbeu_model_final.tflite
 # Uploaded Files
 server/uploads/*
 !server/uploads/.gitkeep
+server/data/history.json
 
 # IDE Settings
 .vscode/
@@ -274,3 +275,5 @@ test-results/
 
 # Temporary AI Scratch Directory
 scratch/
+
+.vercel/

@@ -11,6 +11,7 @@ test.describe('classificationController - classifyWaste', () => {
   const originalLoadGraphModel = tfHelper.loadGraphModel;
   const originalTensor4d = tfHelper.tensor4d;
   const originalReadFileSync = fs.readFileSync;
+  const originalStatSync = fs.statSync;
   const originalUnlink = fs.unlink;
   const originalHistoryAdd = HistoryModel.add;
 
@@ -30,6 +31,7 @@ test.describe('classificationController - classifyWaste', () => {
     tfHelper.loadGraphModel = originalLoadGraphModel;
     tfHelper.tensor4d = originalTensor4d;
     fs.readFileSync = originalReadFileSync;
+    fs.statSync = originalStatSync;
     fs.unlink = originalUnlink;
     HistoryModel.add = originalHistoryAdd;
 
@@ -64,9 +66,29 @@ test.describe('classificationController - classifyWaste', () => {
     assert.deepEqual(jsonValue, { error: 'No image file provided for classification' });
   });
 
+  test('rejects a zero-byte uploaded file as invalid magic bytes', async () => {
+    fs.statSync = () => ({ isFile: () => true, size: 0 });
+    fs.readFileSync = () => Buffer.alloc(0);
+    fs.unlink = (path, cb) => cb(null);
+
+    const req = { file: { path: 'zero-byte.jpg' } };
+    let statusValue = null;
+    let jsonValue = null;
+    const res = {
+      status(code) { statusValue = code; return this; },
+      json(data) { jsonValue = data; return this; },
+    };
+
+    await classifyWaste(req, res, () => {});
+
+    assert.equal(statusValue, 400);
+    assert.deepEqual(jsonValue, { error: 'File bukan gambar JPEG/PNG/WebP yang valid.' });
+  });
+
   test('successfully classifies an image (Happy Path)', async () => {
-    // 1. Mock fs readFileSync and unlink
-    fs.readFileSync = () => Buffer.from('fake-image-bytes');
+    // 1. Mock fs statSync, readFileSync (valid JPEG header), and unlink
+    fs.statSync = () => ({ isFile: () => true, size: 16 });
+    fs.readFileSync = () => Buffer.from([0xFF, 0xD8, 0xFF, 0xE0, 0x00, 0x10, 0x4A, 0x46, 0x49, 0x46, 0x00, 0x01]);
     let fileUnlinked = false;
     fs.unlink = (path, cb) => {
       fileUnlinked = true;
@@ -171,8 +193,9 @@ test.describe('classificationController - classifyWaste', () => {
       return Buffer.from('thumbnail');
     };
 
-    // 2. Mock fs unlink and readFileSync
-    fs.readFileSync = () => Buffer.from('fake-image-bytes');
+    // 2. Mock fs statSync, unlink and readFileSync (valid JPEG header)
+    fs.statSync = () => ({ isFile: () => true, size: 16 });
+    fs.readFileSync = () => Buffer.from([0xFF, 0xD8, 0xFF, 0xE0, 0x00, 0x10, 0x4A, 0x46, 0x49, 0x46, 0x00, 0x01]);
     let fileUnlinked = false;
     fs.unlink = (path, cb) => {
       fileUnlinked = true;
@@ -201,8 +224,9 @@ test.describe('classificationController - classifyWaste', () => {
   });
 
   test('cleans up image and handles inference errors safely', async () => {
-    // 1. Mock fs readFileSync and unlink
-    fs.readFileSync = () => Buffer.from('fake-image-bytes');
+    // 1. Mock fs statSync, readFileSync (valid JPEG header), and unlink
+    fs.statSync = () => ({ isFile: () => true, size: 16 });
+    fs.readFileSync = () => Buffer.from([0xFF, 0xD8, 0xFF, 0xE0, 0x00, 0x10, 0x4A, 0x46, 0x49, 0x46, 0x00, 0x01]);
     let fileUnlinked = false;
     fs.unlink = (path, cb) => {
       fileUnlinked = true;

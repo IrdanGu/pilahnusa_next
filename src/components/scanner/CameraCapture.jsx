@@ -11,6 +11,9 @@ const CameraCapture = ({
   onCapture,
   onToggleCamera,
   onStop,
+  hasTorch = false,
+  torchOn = false,
+  onToggleTorch,
 }) => {
   return (
     <div className="camera-capture">
@@ -65,11 +68,11 @@ const CameraCapture = ({
           >
             <X size={18} color="white" />
           </button>
-          <button
-            className="camera-capture__action-btn camera-capture__action-btn--capture"
-            onClick={onCapture}
-            aria-label="Ambil foto"
-          />
+          {isActive && (
+            <div className="camera-capture__status" role="status" aria-live="polite">
+              Kamera Aktif
+            </div>
+          )}
         </div>
       </div>
 
@@ -93,13 +96,18 @@ const CameraCapture = ({
           <span className="camera-capture__shutter-inner" />
         </button>
 
-        <button
-          className="camera-capture__ctrl-btn"
-          aria-label="Pencahayaan"
-          title="Pencahayaan"
-        >
-          <Sun size={20} />
-        </button>
+        {hasTorch && (
+          <button
+            className="camera-capture__ctrl-btn"
+            onClick={onToggleTorch}
+            aria-label={torchOn ? 'Matikan flashlight' : 'Nyalakan flashlight'}
+            title={torchOn ? 'Matikan flashlight' : 'Nyalakan flashlight'}
+            aria-pressed={torchOn}
+            style={torchOn ? { background: 'var(--color-primary)', color: '#fff' } : undefined}
+          >
+            <Sun size={20} />
+          </button>
+        )}
       </div>
 
       <style>{`
@@ -220,8 +228,8 @@ const CameraCapture = ({
         }
 
         .camera-capture__action-btn {
-          width: 40px;
-          height: 40px;
+          width: 44px;
+          height: 44px;
           border-radius: 50%;
           background: rgba(0,0,0,0.45);
           border: none;
@@ -237,11 +245,18 @@ const CameraCapture = ({
           background: rgba(0,0,0,0.7);
         }
 
-        .camera-capture__action-btn--capture {
-          background: var(--color-primary);
-          width: 36px;
-          height: 36px;
-          box-shadow: 0 2px 8px rgba(34, 197, 94, 0.4);
+        .camera-capture__status {
+          min-height: 44px;
+          display: flex;
+          align-items: center;
+          padding: 0 12px;
+          border: 1px solid rgba(255,255,255,0.24);
+          border-radius: 999px;
+          background: rgba(0,0,0,0.58);
+          color: white;
+          font-size: 0.8125rem;
+          font-weight: 700;
+          backdrop-filter: blur(8px);
         }
 
         .camera-capture__controls {
@@ -253,8 +268,8 @@ const CameraCapture = ({
         }
 
         .camera-capture__ctrl-btn {
-          width: 48px;
-          height: 48px;
+          width: 44px;
+          height: 44px;
           border-radius: 50%;
           background: rgba(255,255,255,0.1);
           border: none;

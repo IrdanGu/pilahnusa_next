@@ -22,6 +22,7 @@ const Button = ({
   disabled = false,
   fullWidth = false,
   className = '',
+  as: Component = 'button',
   onClick,
   type = 'button',
   'aria-label': ariaLabel,
@@ -30,8 +31,8 @@ const Button = ({
   const isDisabled = disabled || loading;
 
   return (
-    <button
-      type={type}
+    <Component
+      type={Component === 'button' ? type : undefined}
       className={`btn btn--${variant} btn--${size} ${fullWidth ? 'btn--full' : ''} ${className}`}
       onClick={onClick}
       disabled={isDisabled}
@@ -98,8 +99,8 @@ const Button = ({
 
         /* Variants */
         .btn--primary {
-          background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
-          color: white;
+          background: linear-gradient(135deg, var(--color-primary-btn) 0%, var(--color-primary-btn-hover) 100%);
+          color: #fff;
           box-shadow: 0 4px 14px rgba(34, 197, 94, 0.35);
         }
         .btn--primary:hover:not(:disabled) {
@@ -113,8 +114,8 @@ const Button = ({
 
         .btn--outline {
           background: transparent;
-          color: var(--color-primary);
-          border: 2px solid var(--color-primary);
+          color: var(--color-primary-text);
+          border: 1.5px solid var(--color-primary-text);
           box-shadow: none;
         }
         .btn--outline:hover:not(:disabled) {
@@ -161,7 +162,7 @@ const Button = ({
           flex-shrink: 0;
         }
       `}</style>
-    </button>
+    </Component>
   );
 };
 

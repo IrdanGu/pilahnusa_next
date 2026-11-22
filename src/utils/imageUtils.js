@@ -47,8 +47,9 @@ export const fileToDataUrl = (file) => {
  * @returns {Promise<{base64: string, dataUrl: string}>}
  */
 export const compressImage = (dataUrl, maxWidth = MAX_WIDTH, maxHeight = MAX_HEIGHT, quality = QUALITY) => {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     const img = new Image();
+    img.onerror = () => reject(new Error('Gagal memuat gambar. Pastikan file tidak rusak.'));
     img.onload = () => {
       let { width, height } = img;
 
@@ -81,8 +82,9 @@ export const compressImage = (dataUrl, maxWidth = MAX_WIDTH, maxHeight = MAX_HEI
  * @returns {Promise<string>} Thumbnail data URL
  */
 export const createThumbnail = (dataUrl) => {
-  return new Promise((resolve) => {
+  return new Promise((resolve, reject) => {
     const img = new Image();
+    img.onerror = () => reject(new Error('Gagal memuat gambar. Pastikan file tidak rusak.'));
     img.onload = () => {
       const size = THUMBNAIL_SIZE;
       const ratio = Math.max(size / img.width, size / img.height);
@@ -129,3 +131,30 @@ export const formatFileSize = (bytes) => {
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 };
+
+export const validateImageFile = (file) => {
+  if (!file) return { valid: false, error: 'Pilih file gambar terlebih dahulu.' };
+  if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+    return { valid: false, error: 'Format tidak didukung. Gunakan JPG, PNG, atau WebP.' };
+  }
+  if (file.size > 10 * 1024 * 1024) {
+    return { valid: false, error: 'Ukuran gambar maksimal 10 MB.' };
+  }
+  return { valid: true, error: null };
+};
+
+export const urlToDataUrl = (url) => new Promise((resolve, reject) => {
+  if (!url) { reject(new Error('URL gambar tidak tersedia.')); return; }
+  fetch(url)
+    .then((response) => {
+      if (!response.ok) throw new Error('Gagal memuat gambar sampel.');
+      return response.blob();
+    })
+    .then((blob) => {
+      const reader = new FileReader();
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = () => reject(new Error('Gagal memuat gambar. Pastikan file tidak rusak.'));
+      reader.readAsDataURL(blob);
+    })
+    .catch((error) => reject(error instanceof Error ? error : new Error('Gagal memuat gambar sampel.')));
+});

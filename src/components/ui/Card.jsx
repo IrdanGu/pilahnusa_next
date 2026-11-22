@@ -9,7 +9,7 @@ const Card = ({
   onClick,
   hoverable = false,
   padding = 'md',
-  shadow = 'md',
+  shadow = 'none',
   style,
   id,
   as: Component = 'div',
@@ -30,6 +30,7 @@ const Card = ({
       style={{
         padding: paddingMap[padding] || padding,
         boxShadow: shadowMap[shadow] || shadow,
+        border: shadow && shadow !== 'none' ? '0' : '1px solid var(--color-border)',
         ...style,
       }}
       role={onClick ? 'button' : undefined}
@@ -40,9 +41,9 @@ const Card = ({
 
       <style>{`
         .card {
-          background: var(--color-white);
+          background: var(--color-surface);
           border-radius: var(--radius-xl);
-          border: 1px solid var(--color-border-light);
+          border: 1px solid var(--color-border);
           transition: all var(--transition-normal);
         }
 

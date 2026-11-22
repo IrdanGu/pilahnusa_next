@@ -8,21 +8,28 @@ import {
   Leaf,
   BotMessageSquare,
   MapPin,
+  Trophy,
+  Sun,
+  Moon,
 } from 'lucide-react';
+import { useTheme } from '../../hooks/useTheme';
 
 const NAV_ITEMS = [
   { path: '/', label: 'Beranda', icon: Home, exact: true },
-  { path: '/scan', label: 'Scan', icon: Camera },
-  { path: '/history', label: 'Riwayat', icon: Clock },
-  { path: '/chatbot', label: 'Chatbot', icon: BotMessageSquare },
+  { path: '/scan', label: 'Scan AI', ariaLabel: 'Scan', icon: Camera },
+  { path: '/dampak', label: 'DampakKu', icon: Leaf },
+  { path: '/tantangan', label: 'Tantangan', icon: Trophy },
   { path: '/bank-sampah', label: 'Bank Sampah', icon: MapPin },
-  { path: '/guide', label: 'Cara Menggunakan', icon: BookOpen },
+  { path: '/chatbot', label: 'Chatbot', icon: BotMessageSquare },
+  { path: '/guide', label: 'Panduan', icon: BookOpen },
+  { path: '/history', label: 'Riwayat', icon: Clock },
 ];
 
 /**
  * Desktop sidebar navigation
  */
 const Sidebar = () => {
+  const { theme, toggleTheme } = useTheme();
   return (
     <aside className="sidebar" aria-label="Navigasi utama">
       {/* Logo */}
@@ -34,13 +41,13 @@ const Sidebar = () => {
         />
         <div className="sidebar__logo-text">
           <span className="sidebar__app-name">BilahBeu AI</span>
-          <span className="sidebar__app-subtitle">Waste Classifier</span>
+          <span className="sidebar__app-subtitle">Pemilah Sampah Cerdas</span>
         </div>
       </div>
 
       {/* Navigation */}
       <nav className="sidebar__nav" role="navigation">
-        {NAV_ITEMS.map(({ path, label, icon: Icon, exact }) => (
+        {NAV_ITEMS.map(({ path, label, ariaLabel, icon: Icon, exact }) => (
           <NavLink
             key={path}
             to={path}
@@ -48,7 +55,7 @@ const Sidebar = () => {
             className={({ isActive }) =>
               `sidebar__nav-item ${isActive ? 'sidebar__nav-item--active' : ''}`
             }
-            aria-label={label}
+            aria-label={ariaLabel || label}
           >
             <span className="sidebar__nav-icon" aria-hidden="true">
               <Icon size={20} />
@@ -58,7 +65,10 @@ const Sidebar = () => {
         ))}
       </nav>
 
-      {/* Bottom Help Card */}
+      <button className="sidebar__theme-toggle" type="button" onClick={toggleTheme} aria-label={`Aktifkan tema ${theme === 'dark' ? 'terang' : 'gelap'}`}>
+        {theme === 'dark' ? <Sun size={17} /> : <Moon size={17} />}
+        <span>{theme === 'dark' ? 'Tema terang' : 'Tema gelap'}</span>
+      </button>
       <div className="sidebar__help-card" aria-label="Bantu Lingkungan">
         <div className="sidebar__help-icon" aria-hidden="true">
           <Leaf size={16} color="var(--color-primary)" />
@@ -73,7 +83,7 @@ const Sidebar = () => {
         .sidebar {
           width: var(--sidebar-width);
           min-height: 100vh;
-          background: var(--color-white);
+          background: var(--color-surface);
           border-right: 1px solid var(--color-border);
           display: flex;
           flex-direction: column;
@@ -156,7 +166,7 @@ const Sidebar = () => {
         }
 
         .sidebar__nav-item--active {
-          background: linear-gradient(135deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+          background: linear-gradient(135deg, var(--color-primary-btn) 0%, var(--color-primary-btn-hover) 100%);
           color: white;
           box-shadow: 0 4px 12px rgba(34, 197, 94, 0.3);
           font-weight: 600;
@@ -178,11 +188,17 @@ const Sidebar = () => {
           border-radius: var(--radius-lg);
           margin-top: auto;
         }
+        .sidebar__theme-toggle {
+          display: flex; align-items: center; gap: 9px; width: 100%; min-height: 44px;
+          padding: 8px 12px; border-radius: var(--radius-md); color: var(--color-text-secondary);
+          font: 600 0.8125rem var(--font-body); text-align: left;
+        }
+        .sidebar__theme-toggle:hover { color: var(--color-primary); background: var(--color-bg-secondary); }
 
         .sidebar__help-icon {
           width: 28px;
           height: 28px;
-          background: white;
+          background: var(--color-surface-elevated);
           border-radius: var(--radius-sm);
           display: flex;
           align-items: center;

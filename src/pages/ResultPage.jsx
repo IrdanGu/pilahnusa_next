@@ -1,11 +1,14 @@
-import React, { useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
-import { ArrowLeft, Trash2, Camera, Share2 } from 'lucide-react';
+import { ArrowLeft, Trash2, Camera, Share2, Copy, MessageCircle, Bot, LoaderCircle } from 'lucide-react';
 import Button from '../components/ui/Button';
 import ClassificationResultCard from '../components/result/ClassificationResultCard';
 import FeedbackCard from '../components/result/FeedbackCard';
 import { getHistoryItemById } from '../utils/storageUtils';
 import useHistory from '../hooks/useHistory';
+import { useToast } from '../components/ui/Toast';
+import { computeItemImpact } from '../utils/ecoCalculations';
+import { generateResultShareCard, shareOrDownloadCard, buildWhatsAppShareUrl, copyToClipboard } from '../utils/shareCard';
 
 /**
  * Result page — displays full waste classification results using ClassificationResultCard
@@ -15,15 +18,31 @@ const ResultPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { feedbackSubmitted, submitUserFeedback } = useHistory();
+  const { addToast } = useToast();
   const [hasScrolledToBottom, setHasScrolledToBottom] = useState(false);
+  const [isSharingCard, setIsSharingCard] = useState(false);
+  const headingRef = useRef(null);
 
   // Get result from navigation state or localStorage fallback
-  const stateResult = location.state?.result;
-  const stateImage  = location.state?.imageDataUrl;
+  const stateItem = location.state?.item;
+  const stateResult = stateItem?.result || location.state?.result;
+  const stateImage = stateItem?.imageBase64 || location.state?.imageDataUrl;
   const historyItem = !stateResult ? getHistoryItemById(id) : null;
 
   const result   = stateResult || historyItem?.result;
   const imageUrl = stateImage  || historyItem?.imageBase64;
+  const item = stateItem || historyItem || { result, imageBase64: imageUrl };
+  const impact = computeItemImpact(item?.result || result);
+
+  useEffect(() => {
+    headingRef.current?.focus();
+  }, [id]);
+
+  useEffect(() => {
+    if (location.state?.fromScan && impact.points > 0) {
+      addToast(`+${impact.points} Poin Eco!`, 'success', 5000);
+    }
+  }, [location.state?.fromScan, impact.points, addToast]);
 
   // Track if user has scrolled to the bottom of the result page
   useEffect(() => {
@@ -65,7 +84,7 @@ const ResultPage = () => {
     return (
       <div className="result-not-found animate-slide-up">
         <Trash2 size={48} color="var(--color-text-tertiary)" aria-hidden="true" />
-        <h1>Hasil tidak ditemukan</h1>
+        <h1 ref={headingRef} tabIndex="-1">Hasil tidak ditemukan</h1>
         <p>Hasil scan tidak tersedia. Coba scan ulang.</p>
         <Button
           variant="primary"
@@ -93,14 +112,28 @@ const ResultPage = () => {
     );
   }
 
-  const handleShare = async () => {
-    const text = `Saya baru saja menscan sampah menggunakan BilahBeu AI!\n${result.name} — Kategori: ${result.category}\n#BilahBeuAI #GoGreen`;
-    if (navigator.share) {
-      await navigator.share({ title: 'BilahBeu AI — Hasil Scan', text });
-    } else {
-      await navigator.clipboard.writeText(text);
-      alert('Teks berhasil disalin!');
+  const shareText = `Saya baru saja menscan sampah menggunakan BilahBeu AI!\n${result.name} — Kategori: ${result.category}\nEstimasi dampak: ${impact.co2SavedKg.toFixed(2)} kg CO₂e\n#BilahBeuAI #GoGreen`;
+
+  const handleShareCard = async () => {
+    setIsSharingCard(true);
+    try {
+      const blob = await generateResultShareCard({
+        imageBase64: item?.imageBase64 || imageUrl,
+        result,
+        co2SavedKg: impact.co2SavedKg,
+      });
+      await shareOrDownloadCard({ blob, filename: 'bilahbeu-hasil-sampah.png', title: 'BilahBeu AI — Hasil Scan', text: shareText });
+      addToast('Kartu hasil berhasil dibagikan atau diunduh.', 'success');
+    } catch (error) {
+      addToast(error.message || 'Gagal membuat kartu hasil.', 'error');
+    } finally {
+      setIsSharingCard(false);
     }
+  };
+
+  const handleCopySummary = async () => {
+    const copied = await copyToClipboard(shareText);
+    addToast(copied ? 'Ringkasan berhasil disalin.' : 'Ringkasan gagal disalin.', copied ? 'success' : 'error');
   };
 
   return (
@@ -114,15 +147,7 @@ const ResultPage = () => {
         >
           <ArrowLeft size={20} />
         </button>
-        <h1 className="result-page__title">Hasil Klasifikasi</h1>
-        <button
-          className="result-share-btn"
-          onClick={handleShare}
-          aria-label="Bagikan hasil"
-          title="Bagikan"
-        >
-          <Share2 size={20} />
-        </button>
+        <h1 ref={headingRef} tabIndex="-1" className="result-page__title">Hasil Klasifikasi</h1>
       </div>
 
       {/* Main scrollable content */}
@@ -139,34 +164,41 @@ const ResultPage = () => {
 
         {/* Action buttons */}
         <div className="result-actions">
-          <Button
-            variant="outline"
-            size="md"
-            icon={<ArrowLeft size={16} />}
-            onClick={() => navigate('/history')}
-            id="btn-see-history"
-            aria-label="Lihat riwayat scan"
+          <button type="button" className="result-action-btn result-action-btn--primary" onClick={handleShareCard} disabled={isSharingCard}>
+            {isSharingCard ? <LoaderCircle size={18} className="spin" /> : <Share2 size={18} />}
+            Unduh / Bagikan Kartu
+          </button>
+          <a className="result-action-btn" href={buildWhatsAppShareUrl(shareText)} target="_blank" rel="noopener noreferrer">
+            <MessageCircle size={18} /> WhatsApp
+          </a>
+          <button type="button" className="result-action-btn" onClick={handleCopySummary}>
+            <Copy size={18} /> Salin Ringkasan
+          </button>
+          <button
+            type="button"
+            className="result-action-btn"
+            onClick={() => navigate('/chatbot', { state: { contextItem: {
+              name: result?.name,
+              category: result?.category,
+              confidence: result?.confidence,
+              disposalGuide: result?.disposalGuide,
+              environmentalImpact: result?.environmentalImpact,
+            } } })}
           >
-            Lihat Riwayat
-          </Button>
-          <Button
-            variant="primary"
-            size="md"
-            icon={<Camera size={16} />}
-            onClick={() => navigate('/scan')}
-            id="btn-scan-new"
-            aria-label="Scan sampah baru"
-            fullWidth
-          >
-            Scan Lagi
-          </Button>
+            <Bot size={18} /> Tanya AI tentang Sampah Ini
+          </button>
+          <button type="button" className="result-action-btn" onClick={() => navigate('/history')}>
+            <ArrowLeft size={18} /> Lihat Riwayat
+          </button>
+          <button type="button" className="result-action-btn" onClick={() => navigate('/scan')}>
+            <Camera size={18} /> Scan Lagi
+          </button>
         </div>
       </div>
 
       <style>{`
         .result-page {
-          padding: 0;
-          min-height: 100vh;
+          padding: 0 0 24px;
           background: var(--color-bg);
         }
 
@@ -175,8 +207,8 @@ const ResultPage = () => {
           align-items: center;
           gap: 12px;
           padding: 20px 24px;
-          background: var(--color-white);
-          border-bottom: 1px solid var(--color-border-light);
+          background: var(--color-surface-elevated);
+          border-bottom: 1px solid var(--color-border);
           position: sticky;
           top: 0;
           z-index: 10;
@@ -184,8 +216,8 @@ const ResultPage = () => {
 
         .result-back-btn,
         .result-share-btn {
-          width: 40px;
-          height: 40px;
+          width: 44px;
+          height: 44px;
           border-radius: var(--radius-md);
           border: 1.5px solid var(--color-border);
           background: var(--color-white);
@@ -222,9 +254,34 @@ const ResultPage = () => {
 
         .result-actions {
           display: flex;
+          flex-wrap: wrap;
           gap: 12px;
           padding-bottom: 8px;
         }
+        .result-action-btn {
+          min-height: 44px;
+          flex: 1 1 210px;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          gap: 8px;
+          padding: 10px 14px;
+          border: 1.5px solid var(--color-border);
+          border-radius: var(--radius-md);
+          background: var(--color-surface-elevated);
+          color: var(--color-text-primary);
+          font-weight: 700;
+          text-decoration: none;
+          cursor: pointer;
+        }
+        .result-action-btn--primary {
+          background: var(--color-primary-btn);
+          border-color: var(--color-primary-btn);
+          color: white;
+        }
+        .result-action-btn:disabled { opacity: 0.72; cursor: wait; }
+        .result-page__title:focus { outline: none; }
+        .spin { animation: spin 1s linear infinite; }
 
         @media (max-width: 767px) {
           .result-content {
@@ -233,6 +290,7 @@ const ResultPage = () => {
           .result-actions {
             flex-direction: column;
           }
+          .result-action-btn { width: 100%; flex-basis: auto; }
         }
       `}</style>
     </div>

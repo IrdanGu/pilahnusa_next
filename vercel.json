@@ -5,7 +5,9 @@
       "src": "server/server.js",
       "use": "@vercel/node",
       "config": {
-        "includeFiles": ["server/data/tfjs_model/**"]
+        "includeFiles": ["server/data/tfjs_model/**"],
+        "maxDuration": 60,
+        "memory": 3008
       }
     },
     {
@@ -24,6 +26,11 @@
     },
     {
       "src": "/(.*)",
+      "headers": {
+        "X-Content-Type-Options": "nosniff",
+        "X-Frame-Options": "DENY",
+        "Referrer-Policy": "strict-origin-when-cross-origin"
+      },
       "dest": "/index.html"
     }
   ]

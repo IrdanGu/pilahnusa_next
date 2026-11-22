@@ -1,4 +1,4 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
 import { classifyWaste } from '../services/aiService';
 
 /**
@@ -9,12 +9,18 @@ const useClassifier = () => {
   const [result, setResult] = useState(null);
   const [error, setError] = useState(null);
   const [progress, setProgress] = useState(0);
+  const mountedRef = useRef(true);
+  const analyzingRef = useRef(false);
+
+  useEffect(() => () => { mountedRef.current = false; }, []);
 
   /**
    * Analyze a waste image
    * @param {string} base64Image - Base64 image data
    */
   const analyze = useCallback(async (base64Image) => {
+    if (analyzingRef.current) return null;
+    analyzingRef.current = true;
     setIsAnalyzing(true);
     setError(null);
     setResult(null);
@@ -22,7 +28,7 @@ const useClassifier = () => {
 
     // Simulate progress updates
     const progressInterval = setInterval(() => {
-      setProgress((prev) => {
+      if (mountedRef.current) setProgress((prev) => {
         if (prev >= 85) {
           clearInterval(progressInterval);
           return prev;
@@ -34,15 +40,18 @@ const useClassifier = () => {
     try {
       const classificationResult = await classifyWaste(base64Image);
 
-      setProgress(100);
-      setResult(classificationResult);
+      if (mountedRef.current) {
+        setProgress(100);
+        setResult(classificationResult);
+      }
       return classificationResult;
     } catch (err) {
-      setError(err.message || 'Terjadi kesalahan saat menganalisis gambar.');
+      if (mountedRef.current) setError(err.message || 'Terjadi kesalahan saat menganalisis gambar.');
       return null;
     } finally {
       clearInterval(progressInterval);
-      setIsAnalyzing(false);
+      analyzingRef.current = false;
+      if (mountedRef.current) setIsAnalyzing(false);
     }
   }, []);
 

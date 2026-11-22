@@ -13,9 +13,12 @@ const useCamera = () => {
   const [error, setError] = useState(null);
   const [hasPermission, setHasPermission] = useState(null);
   const [facingMode, setFacingMode] = useState('environment'); // 'user' | 'environment'
+  const [isCameraAvailable, setIsCameraAvailable] = useState(false);
+  const [hasTorch, setHasTorch] = useState(false);
+  const [torchOn, setTorchOn] = useState(false);
 
   /** Start the camera stream */
-  const startCamera = useCallback(async () => {
+  const startCamera = useCallback(async (mode = facingMode) => {
     setIsLoading(true);
     setError(null);
 
@@ -27,7 +30,7 @@ const useCamera = () => {
     try {
       const constraints = {
         video: {
-          facingMode,
+          facingMode: mode,
           width: { ideal: 1280 },
           height: { ideal: 720 },
         },
@@ -44,6 +47,10 @@ const useCamera = () => {
 
       setIsActive(true);
       setHasPermission(true);
+      const track = stream.getVideoTracks()[0];
+      const torchSupported = !!track?.getCapabilities?.().torch;
+      setHasTorch(torchSupported);
+      setTorchOn(false);
     } catch (err) {
       let message = 'Tidak dapat mengakses kamera.';
       if (err.name === 'NotAllowedError') {
@@ -92,19 +99,25 @@ const useCamera = () => {
 
   /** Toggle between front and back camera */
   const toggleCamera = useCallback(async () => {
+    const nextMode = facingMode === 'environment' ? 'user' : 'environment';
+    const wasActive = isActive;
     stopCamera();
-    setFacingMode((prev) => (prev === 'environment' ? 'user' : 'environment'));
-  }, [stopCamera]);
+    setFacingMode(nextMode);
+    if (wasActive) await startCamera(nextMode);
+  }, [facingMode, isActive, startCamera, stopCamera]);
 
-  /** Check if camera API is available */
-  const isCameraAvailable = typeof navigator !== 'undefined' && !!navigator.mediaDevices?.getUserMedia;
+  const toggleTorch = useCallback(async () => {
+    const track = streamRef.current?.getVideoTracks?.()[0];
+    if (!track || !track.getCapabilities?.().torch) return false;
+    const next = !torchOn;
+    await track.applyConstraints({ advanced: [{ torch: next }] });
+    setTorchOn(next);
+    return next;
+  }, [torchOn]);
 
-  // Restart camera when facingMode changes
   useEffect(() => {
-    if (isActive) {
-      startCamera();
-    }
-  }, [facingMode]); // eslint-disable-line react-hooks/exhaustive-deps
+    setIsCameraAvailable(typeof navigator !== 'undefined' && !!navigator.mediaDevices?.getUserMedia);
+  }, []);
 
   // Cleanup on unmount
   useEffect(() => {
@@ -126,6 +139,9 @@ const useCamera = () => {
     stopCamera,
     capturePhoto,
     toggleCamera,
+    hasTorch,
+    torchOn,
+    toggleTorch,
   };
 };
 

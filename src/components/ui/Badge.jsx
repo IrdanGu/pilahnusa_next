@@ -25,7 +25,7 @@ const CategoryBadge = ({ category, size = 'md', showDot = true }) => {
         fontSize: s.fontSize,
         fontWeight: 600,
         fontFamily: 'var(--font-body)',
-        color: cat.color,
+        color: cat.textColor || cat.color,
         backgroundColor: cat.bgColor,
         border: `1.5px solid ${cat.borderColor}`,
         borderRadius: 'var(--radius-full)',

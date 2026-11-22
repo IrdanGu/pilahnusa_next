@@ -89,7 +89,7 @@ const Loader = ({ text = 'Menganalisis sampah...', progress = 0 }) => {
 
         .loader__progress-fill {
           height: 100%;
-          background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-primary-dark) 100%);
+          background: linear-gradient(90deg, var(--color-primary-btn) 0%, var(--color-primary-btn-hover) 100%);
           border-radius: var(--radius-full);
           transition: width 0.4s ease;
         }
